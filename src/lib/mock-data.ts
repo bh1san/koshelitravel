@@ -1,3 +1,4 @@
+
 export interface TravelPackage {
   id: string;
   title: string;
@@ -18,6 +19,19 @@ export interface Testimonial {
   author: string;
   location?: string;
   image?: string;
+  dataAiHint?: string;
+}
+
+export interface BlogArticle {
+  id: string;
+  title: string;
+  slug: string; // for URL generation
+  content: string;
+  author: string;
+  publishedDate: string; // "YYYY-MM-DD"
+  status: 'draft' | 'published';
+  tags?: string[];
+  featuredImage?: string;
   dataAiHint?: string;
 }
 
@@ -127,4 +141,41 @@ export const mockTestimonials: Testimonial[] = [
     image: 'https://placehold.co/100x100.png',
     dataAiHint: 'traveler selfie'
   },
+];
+
+export let mockBlogArticles: BlogArticle[] = [
+  {
+    id: 'blog-1',
+    title: 'Top 5 Summer Destinations for 2024',
+    slug: 'top-5-summer-destinations-2024',
+    content: 'Discover the hottest places to visit this summer. From sunny beaches to cool mountain retreats, we have got you covered...',
+    author: 'Admin TravelExpert',
+    publishedDate: '2024-05-15',
+    status: 'published',
+    tags: ['summer', 'travel', 'vacation'],
+    featuredImage: 'https://placehold.co/600x400.png',
+    dataAiHint: 'summer beach'
+  },
+  {
+    id: 'blog-2',
+    title: 'A Guide to Budget Travel in Southeast Asia',
+    slug: 'guide-budget-travel-southeast-asia',
+    content: 'Traveling on a budget? Southeast Asia offers incredible experiences without breaking the bank. Here is how...',
+    author: 'Admin Backpacker',
+    publishedDate: '2024-04-22',
+    status: 'published',
+    tags: ['budget travel', 'asia', 'adventure'],
+    featuredImage: 'https://placehold.co/600x400.png',
+    dataAiHint: 'asia temple'
+  },
+  {
+    id: 'blog-3',
+    title: 'Unveiling New Luxury Packages',
+    slug: 'unveiling-new-luxury-packages',
+    content: 'We are excited to announce our new lineup of luxury travel packages. Experience the world in style...',
+    author: 'KosheliTravel Team',
+    publishedDate: '2024-06-01',
+    status: 'draft',
+    tags: ['luxury', 'new', 'packages'],
+  }
 ];
