@@ -181,7 +181,7 @@ export let mockBlogArticles: BlogArticle[] = [
     id: 'blog-1',
     title: 'Top 5 Summer Destinations for 2024',
     slug: 'top-5-summer-destinations-2024',
-    content: 'Discover the hottest places to visit this summer. From sunny beaches to cool mountain retreats, we have got you covered...',
+    content: 'Discover the hottest places to visit this summer. From sunny beaches to cool mountain retreats, we have got you covered with insider tips and must-see attractions. Explore vibrant cultures and create unforgettable memories.',
     author: 'Admin TravelExpert',
     publishedDate: '2024-05-15',
     status: 'published',
@@ -193,9 +193,9 @@ export let mockBlogArticles: BlogArticle[] = [
     id: 'blog-2',
     title: 'A Guide to Budget Travel in Southeast Asia',
     slug: 'guide-budget-travel-southeast-asia',
-    content: 'Traveling on a budget? Southeast Asia offers incredible experiences without breaking the bank. Here is how...',
+    content: 'Traveling on a budget? Southeast Asia offers incredible experiences without breaking the bank. Here is how to navigate bustling markets, ancient temples, and stunning natural landscapes while keeping your expenses low.',
     author: 'Admin Backpacker',
-    publishedDate: '2024-04-22',
+    publishedDate: '2024-06-22', // Made more recent
     status: 'published',
     tags: ['budget travel', 'asia', 'adventure'],
     featuredImage: 'https://placehold.co/600x400.png',
@@ -203,15 +203,39 @@ export let mockBlogArticles: BlogArticle[] = [
   },
   {
     id: 'blog-3',
-    title: 'Unveiling New Luxury Packages',
-    slug: 'unveiling-new-luxury-packages',
-    content: 'We are excited to announce our new lineup of luxury travel packages. Experience the world in style...',
+    title: 'Unveiling New Luxury Packages to the Maldives',
+    slug: 'unveiling-new-luxury-packages-maldives',
+    content: 'We are excited to announce our new lineup of luxury travel packages to the Maldives. Experience the world in style with overwater bungalows, private beaches, and world-class dining. Your ultimate escape awaits.',
     author: 'KosheliTravel Team',
-    publishedDate: '2024-06-01',
-    status: 'draft',
-    tags: ['luxury', 'new', 'packages'],
+    publishedDate: '2024-07-01', // Made most recent
+    status: 'published',
+    tags: ['luxury', 'new', 'packages', 'maldives'],
     featuredImage: 'https://placehold.co/600x400.png',
-    featuredImageAiHint: 'luxury travel yacht'
+    featuredImageAiHint: 'maldives luxury villa'
+  },
+  {
+    id: 'blog-4',
+    title: 'Exploring the Culinary Scene in Italy',
+    slug: 'exploring-culinary-scene-italy',
+    content: 'A deep dive into the delicious world of Italian cuisine. From pasta making in Tuscany to street food in Naples, get ready for a gastronomic journey. We will share our favorite spots and local secrets.',
+    author: 'Chef Giovanni',
+    publishedDate: '2024-03-10',
+    status: 'published',
+    tags: ['food', 'italy', 'culture'],
+    featuredImage: 'https://placehold.co/600x400.png',
+    featuredImageAiHint: 'italy food pasta'
+  },
+   {
+    id: 'blog-5',
+    title: 'Upcoming: Adventure Treks in Nepal',
+    slug: 'upcoming-adventure-treks-nepal',
+    content: 'Get ready for breathtaking views and challenging trails. We are currently finalizing our new adventure trekking packages in the Himalayas. Stay tuned for details on routes, difficulty levels, and booking information.',
+    author: 'Admin Explorer',
+    publishedDate: '2024-07-15',
+    status: 'draft',
+    tags: ['trekking', 'nepal', 'adventure', 'coming soon'],
+    featuredImage: 'https://placehold.co/600x400.png',
+    featuredImageAiHint: 'nepal mountains trekking'
   }
 ];
 
@@ -249,3 +273,4 @@ export let mockTeamMembers: TeamMember[] = [
     dataAiHint: 'man creative professional'
   }
 ];
+

@@ -8,6 +8,7 @@ const navLinks = [
   { href: '#packages', label: 'Packages' },
   { href: '#recommendations', label: 'AI Picks' },
   { href: '#our-team', label: 'Our Team' },
+  { href: '#latest-blogs', label: 'Blog' },
   { href: '#testimonials', label: 'Testimonials' },
   { href: '#contact', label: 'Contact' },
 ];
@@ -71,3 +72,4 @@ export function Header() {
     </header>
   );
 }
+

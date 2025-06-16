@@ -8,6 +8,7 @@ import { AiRecommendationsSection } from '@/components/ai/ai-recommendations-sec
 import { ContactSection } from '@/components/contact/contact-section';
 import { PromoPopup } from '@/components/common/promo-popup';
 import { OurTeamSection } from '@/components/common/our-team-section';
+import { LatestBlogsSection } from '@/components/blog/latest-blogs-section';
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         <TravelPackagesSection />
         <AiRecommendationsSection />
         <OurTeamSection />
+        <LatestBlogsSection />
         <TestimonialsSection />
         <ContactSection />
       </main>
@@ -26,3 +28,4 @@ export default function Home() {
     </div>
   );
 }
+
