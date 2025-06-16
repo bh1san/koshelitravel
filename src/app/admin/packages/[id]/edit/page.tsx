@@ -24,6 +24,7 @@ export default function EditPackagePage() {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [imageAiHint, setImageAiHint] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function EditPackagePage() {
         setPrice(foundPackage.price);
         setDescription(foundPackage.description);
         setImageUrl(foundPackage.image);
+        setImageAiHint(foundPackage.dataAiHint || '');
       }
     }
   }, [id]);
@@ -44,7 +46,7 @@ export default function EditPackagePage() {
     setIsLoading(true);
 
     // Simulate API call
-    console.log('Updating package:', { id, title, price, description, image: imageUrl });
+    console.log('Updating package:', { id, title, price, description, image: imageUrl, dataAiHint: imageAiHint });
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // In a real app, you would update the data source here.
@@ -57,6 +59,7 @@ export default function EditPackagePage() {
             price,
             description,
             image: imageUrl,
+            dataAiHint: imageAiHint,
         };
     }
     
@@ -125,6 +128,36 @@ export default function EditPackagePage() {
               <Label htmlFor="imageUrl">Image URL</Label>
               <Input id="imageUrl" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
               <p className="text-xs text-muted-foreground mt-1">URL of the package image (e.g., https://placehold.co/600x400.png).</p>
+            </div>
+            {imageUrl && (
+                <div className="mt-2">
+                    <Label>Image Preview:</Label>
+                    <div className="mt-1 border rounded-md p-2 flex justify-center items-center bg-muted/30 max-h-64 overflow-hidden">
+                        <img 
+                            src={imageUrl} 
+                            alt="Package Preview" 
+                            className="max-w-full max-h-56 object-contain rounded"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const errorMsg = document.createElement('p');
+                                errorMsg.textContent = 'Preview not available or image URL is invalid.';
+                                errorMsg.className = 'text-destructive text-xs';
+                                target.parentNode?.appendChild(errorMsg);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
+            <div>
+              <Label htmlFor="imageAiHint">Image AI Hint</Label>
+              <Input 
+                id="imageAiHint" 
+                value={imageAiHint} 
+                onChange={(e) => setImageAiHint(e.target.value)} 
+                placeholder="e.g., paris eiffel tower night"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Keywords to help describe the image (max 2 words).</p>
             </div>
           </CardContent>
           <CardFooter>

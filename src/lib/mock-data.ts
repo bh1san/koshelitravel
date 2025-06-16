@@ -32,7 +32,7 @@ export interface BlogArticle {
   status: 'draft' | 'published';
   tags?: string[];
   featuredImage?: string;
-  dataAiHint?: string;
+  featuredImageAiHint?: string; // Added for AI hint for featured image
 }
 
 export const DEFAULT_PROMO_IMAGE_URL = '/images/visa-promo.png';
@@ -178,7 +178,7 @@ export let mockBlogArticles: BlogArticle[] = [
     status: 'published',
     tags: ['summer', 'travel', 'vacation'],
     featuredImage: 'https://placehold.co/600x400.png',
-    dataAiHint: 'summer beach'
+    featuredImageAiHint: 'summer beach resort'
   },
   {
     id: 'blog-2',
@@ -190,7 +190,7 @@ export let mockBlogArticles: BlogArticle[] = [
     status: 'published',
     tags: ['budget travel', 'asia', 'adventure'],
     featuredImage: 'https://placehold.co/600x400.png',
-    dataAiHint: 'asia temple'
+    featuredImageAiHint: 'asia temple mountains'
   },
   {
     id: 'blog-3',
@@ -201,6 +201,7 @@ export let mockBlogArticles: BlogArticle[] = [
     publishedDate: '2024-06-01',
     status: 'draft',
     tags: ['luxury', 'new', 'packages'],
+    featuredImage: 'https://placehold.co/600x400.png',
+    featuredImageAiHint: 'luxury travel yacht'
   }
 ];
-

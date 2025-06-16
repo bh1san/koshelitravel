@@ -26,6 +26,8 @@ export default function EditBlogPostPage() {
   const [content, setContent] = useState('');
   const [author, setAuthor] = useState('');
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
+  const [featuredImage, setFeaturedImage] = useState('');
+  const [featuredImageAiHint, setFeaturedImageAiHint] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -38,6 +40,8 @@ export default function EditBlogPostPage() {
         setContent(foundArticle.content);
         setAuthor(foundArticle.author);
         setStatus(foundArticle.status);
+        setFeaturedImage(foundArticle.featuredImage || '');
+        setFeaturedImageAiHint(foundArticle.featuredImageAiHint || '');
       }
     }
   }, [id]);
@@ -49,7 +53,7 @@ export default function EditBlogPostPage() {
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
     setTitle(newTitle);
-    if (!slug || slug === generateSlug(article?.title || '')) { // Only auto-update slug if it was auto-generated or matches old title's slug
+    if (!slug || slug === generateSlug(article?.title || '')) { 
         setSlug(generateSlug(newTitle));
     }
   };
@@ -59,15 +63,20 @@ export default function EditBlogPostPage() {
     event.preventDefault();
     setIsLoading(true);
 
-    const updatedArticleData = { title, slug: slug || generateSlug(title), content, author, status };
+    const updatedArticleData = { 
+        title, 
+        slug: slug || generateSlug(title), 
+        content, 
+        author, 
+        status,
+        featuredImage: featuredImage || undefined,
+        featuredImageAiHint: featuredImageAiHint || undefined,
+    };
 
-    // Simulate API call
     console.log('Updating blog post:', { id, ...updatedArticleData });
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // In a real app, update data source here.
-    // For mock data, this won't persist beyond this simulation.
-     const articleIndex = mockBlogArticles.findIndex(a => a.id === id);
+    const articleIndex = mockBlogArticles.findIndex(a => a.id === id);
     if (articleIndex !== -1) {
         mockBlogArticles[articleIndex] = {
             ...mockBlogArticles[articleIndex],
@@ -133,6 +142,46 @@ export default function EditBlogPostPage() {
             <div>
               <Label htmlFor="author">Author</Label>
               <Input id="author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
+            </div>
+            <div>
+              <Label htmlFor="featuredImage">Featured Image URL</Label>
+              <Input 
+                id="featuredImage" 
+                type="url"
+                value={featuredImage} 
+                onChange={(e) => setFeaturedImage(e.target.value)} 
+                placeholder="https://example.com/your-image.png" 
+              />
+            </div>
+            {featuredImage && (
+                <div className="mt-2">
+                    <Label>Image Preview:</Label>
+                    <div className="mt-1 border rounded-md p-2 flex justify-center items-center bg-muted/30 max-h-64 overflow-hidden">
+                        <img 
+                            src={featuredImage} 
+                            alt="Featured Image Preview" 
+                            className="max-w-full max-h-56 object-contain rounded"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const errorMsg = document.createElement('p');
+                                errorMsg.textContent = 'Preview not available or image URL is invalid.';
+                                errorMsg.className = 'text-destructive text-xs';
+                                target.parentNode?.appendChild(errorMsg);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
+            <div>
+              <Label htmlFor="featuredImageAiHint">Featured Image AI Hint</Label>
+              <Input 
+                id="featuredImageAiHint" 
+                value={featuredImageAiHint} 
+                onChange={(e) => setFeaturedImageAiHint(e.target.value)} 
+                placeholder="e.g., historical landmark" 
+              />
+               <p className="text-xs text-muted-foreground mt-1">Keywords to help describe the image (max 2 words).</p>
             </div>
             <div>
               <Label htmlFor="status">Status</Label>

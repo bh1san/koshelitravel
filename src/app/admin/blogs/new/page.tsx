@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Save, PlusCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { mockBlogArticles, type BlogArticle } from '@/lib/mock-data'; // Import mock data
+import { mockBlogArticles, type BlogArticle } from '@/lib/mock-data'; 
 
 export default function NewBlogPostPage() {
   const router = useRouter();
@@ -21,8 +21,10 @@ export default function NewBlogPostPage() {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [content, setContent] = useState('');
-  const [author, setAuthor] = useState('Admin'); // Default author
+  const [author, setAuthor] = useState('Admin'); 
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
+  const [featuredImage, setFeaturedImage] = useState('');
+  const [featuredImageAiHint, setFeaturedImageAiHint] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const generateSlug = (title: string) => {
@@ -46,19 +48,17 @@ export default function NewBlogPostPage() {
       content,
       author,
       status,
-      // featuredImage, tags, etc. can be added here
+      featuredImage: featuredImage || undefined,
+      featuredImageAiHint: featuredImageAiHint || undefined,
     };
     
-    // Simulate API call
     console.log('Creating new blog post:', newArticle);
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // In a real app, you would send this to your backend to save.
-    // For mock data, we can add it to the array (this won't persist across refreshes).
     const fullNewArticle: BlogArticle = {
         ...newArticle,
-        id: `blog-${Date.now()}`, // Simple unique ID
-        publishedDate: new Date().toISOString().split('T')[0], // Set current date
+        id: `blog-${Date.now()}`, 
+        publishedDate: new Date().toISOString().split('T')[0], 
     };
     mockBlogArticles.push(fullNewArticle);
 
@@ -99,6 +99,46 @@ export default function NewBlogPostPage() {
             <div>
               <Label htmlFor="author">Author</Label>
               <Input id="author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
+            </div>
+            <div>
+              <Label htmlFor="featuredImage">Featured Image URL</Label>
+              <Input 
+                id="featuredImage" 
+                type="url"
+                value={featuredImage} 
+                onChange={(e) => setFeaturedImage(e.target.value)} 
+                placeholder="https://example.com/your-image.png" 
+              />
+            </div>
+            {featuredImage && (
+                <div className="mt-2">
+                    <Label>Image Preview:</Label>
+                    <div className="mt-1 border rounded-md p-2 flex justify-center items-center bg-muted/30 max-h-64 overflow-hidden">
+                        <img 
+                            src={featuredImage} 
+                            alt="Featured Image Preview" 
+                            className="max-w-full max-h-56 object-contain rounded"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                const errorMsg = document.createElement('p');
+                                errorMsg.textContent = 'Preview not available or image URL is invalid.';
+                                errorMsg.className = 'text-destructive text-xs';
+                                target.parentNode?.appendChild(errorMsg);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
+            <div>
+              <Label htmlFor="featuredImageAiHint">Featured Image AI Hint</Label>
+              <Input 
+                id="featuredImageAiHint" 
+                value={featuredImageAiHint} 
+                onChange={(e) => setFeaturedImageAiHint(e.target.value)} 
+                placeholder="e.g., mountain landscape" 
+              />
+               <p className="text-xs text-muted-foreground mt-1">Keywords to help describe the image (max 2 words).</p>
             </div>
             <div>
               <Label htmlFor="status">Status</Label>
