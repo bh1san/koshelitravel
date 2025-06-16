@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, type FormEvent } from 'react';
@@ -90,7 +91,7 @@ export function ContactSection() {
                 </p>
                 <p className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-primary" />
-                  <span>123 Travel Lane, Adventure City, World</span>
+                  <span>2 Al Raffa St - Al Fahidi - Dubai</span>
                 </p>
               </CardContent>
             </Card>
