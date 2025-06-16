@@ -8,11 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Send, Mail, Phone, MapPin } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { sendContactEmailAction } from '@/app/actions/sendEmailAction';
 
 export function ContactSection() {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const [submissionStatus, setSubmissionStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -21,15 +24,33 @@ export function ContactSection() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log('Contact form submission:', formData);
-    toast({
-      title: "Message Sent!",
-      description: "Thanks for reaching out. We'll get back to you soon.",
-    });
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    setIsLoading(false);
+    setSubmissionStatus(null);
+
+    try {
+      const result = await sendContactEmailAction(formData);
+      if (result.success) {
+        setSubmissionStatus({ type: 'success', message: result.message });
+        setFormData({ name: '', email: '', subject: '', message: '' }); // Clear form
+      } else {
+        setSubmissionStatus({ type: 'error', message: result.message }); // Set local error message
+        toast({ // Use toast for errors
+          variant: "destructive",
+          title: "Message Not Sent",
+          description: result.message,
+        });
+      }
+    } catch (error) {
+      console.error("Contact form submission error:", error);
+      const errorMessage = "An unexpected error occurred. Please try again later.";
+      setSubmissionStatus({ type: 'error', message: errorMessage });
+      toast({
+        variant: "destructive",
+        title: "Submission Error",
+        description: errorMessage,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -71,6 +92,11 @@ export function ContactSection() {
                   Send Message
                 </Button>
               </form>
+              {submissionStatus && (
+                <p className={`mt-4 text-sm ${submissionStatus.type === 'success' ? 'text-green-600' : 'text-destructive font-medium'}`}>
+                  {submissionStatus.message}
+                </p>
+              )}
             </CardContent>
           </Card>
 
