@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Edit as EditIcon } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 export default function EditPackagePage() {
@@ -23,6 +23,7 @@ export default function EditPackagePage() {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function EditPackagePage() {
         setTitle(foundPackage.title);
         setPrice(foundPackage.price);
         setDescription(foundPackage.description);
+        setImageUrl(foundPackage.image);
       }
     }
   }, [id]);
@@ -42,7 +44,7 @@ export default function EditPackagePage() {
     setIsLoading(true);
 
     // Simulate API call
-    console.log('Updating package:', { id, title, price, description });
+    console.log('Updating package:', { id, title, price, description, image: imageUrl });
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     // In a real app, you would update the data source here.
@@ -54,6 +56,7 @@ export default function EditPackagePage() {
             title,
             price,
             description,
+            image: imageUrl,
         };
     }
     
@@ -95,7 +98,7 @@ export default function EditPackagePage() {
       </Button>
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
-          <CardTitle>Edit Travel Package</CardTitle>
+          <CardTitle className="flex items-center gap-2"><EditIcon /> Edit Travel Package</CardTitle>
           <CardDescription>Modify the details for "{pkg?.title}".</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -117,6 +120,11 @@ export default function EditPackagePage() {
                 rows={6} 
                 required 
               />
+            </div>
+            <div>
+              <Label htmlFor="imageUrl">Image URL</Label>
+              <Input id="imageUrl" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
+              <p className="text-xs text-muted-foreground mt-1">URL of the package image (e.g., https://placehold.co/600x400.png).</p>
             </div>
           </CardContent>
           <CardFooter>
