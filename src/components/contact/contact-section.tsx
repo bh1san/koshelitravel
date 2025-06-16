@@ -126,9 +126,7 @@ export function ContactSection() {
                     <CardTitle className="font-headline">Office Hours</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-1 text-foreground/90 text-sm">
-                    <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                    <p>Saturday: 10:00 AM - 4:00 PM</p>
-                    <p>Sunday: Closed</p>
+                    <p>Everyday: 9:00 AM - 11:00 PM</p>
                 </CardContent>
             </Card>
           </div>
