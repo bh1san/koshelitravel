@@ -136,7 +136,7 @@ export const mockTestimonials: Testimonial[] = [
     author: 'Sarah L.',
     location: 'New York, USA',
     image: 'https://placehold.co/100x100.png',
-    dataAiHint: 'happy person'
+    dataAiHint: 'dubai tour'
   },
   {
     id: '2',
@@ -144,7 +144,7 @@ export const mockTestimonials: Testimonial[] = [
     author: 'John B.',
     location: 'London, UK',
     image: 'https://placehold.co/100x100.png',
-    dataAiHint: 'smiling family'
+    dataAiHint: 'dubai vacation'
   },
   {
     id: '3',
@@ -152,7 +152,7 @@ export const mockTestimonials: Testimonial[] = [
     author: 'Maria G.',
     location: 'Toronto, Canada',
     image: 'https://placehold.co/100x100.png',
-    dataAiHint: 'traveler selfie'
+    dataAiHint: 'dubai landmark'
   },
 ];
 
@@ -192,3 +192,4 @@ export let mockBlogArticles: BlogArticle[] = [
     tags: ['luxury', 'new', 'packages'],
   }
 ];
+
