@@ -1,43 +1,48 @@
 
 "use client";
 
+import { useEffect, useState } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Ticket, Mail, Phone, ArrowRight, BookOpenCheck, Briefcase, Users, GraduationCap } from 'lucide-react';
+import { Ticket, Mail, Phone, ArrowRight, BookOpenCheck, Briefcase, Users, GraduationCap, FileText as GeneralVisaIcon } from 'lucide-react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
+import { mockVisaOptions, type VisaOption } from '@/lib/mock-data';
 
-// export const metadata: Metadata = { // Metadata cannot be used in client components
+// Metadata cannot be used in client components
+// export const metadata: Metadata = { 
 //   title: 'Visit Visa Services - KosheliTravel',
 //   description: 'Explore visit visa options and get expert assistance with KosheliTravel for your travel needs.',
 // };
 
+const getVisaIcon = (identifier: VisaOption['iconIdentifier']): React.ReactElement => {
+  switch (identifier) {
+    case 'tourist':
+      return <BookOpenCheck className="w-8 h-8 text-accent" />;
+    case 'business':
+      return <Briefcase className="w-8 h-8 text-accent" />;
+    case 'family':
+      return <Users className="w-8 h-8 text-accent" />;
+    case 'student':
+      return <GraduationCap className="w-8 h-8 text-accent" />;
+    case 'general':
+    default:
+      return <GeneralVisaIcon className="w-8 h-8 text-accent" />;
+  }
+};
+
 
 export default function VisitVisaPage() {
-  const visaOptions = [
-    {
-      title: 'Tourist Visa',
-      description: 'Explore new destinations for leisure and tourism. We assist with applications for various countries.',
-      icon: <BookOpenCheck className="w-8 h-8 text-accent" />
-    },
-    {
-      title: 'Business Visa',
-      description: 'Travel for business meetings, conferences, or exploring new ventures. Streamlined processing available.',
-      icon: <Briefcase className="w-8 h-8 text-accent" />
-    },
-    {
-      title: 'Family Visit Visa',
-      description: 'Visit your loved ones abroad. We help navigate the requirements for family sponsorship and invitations.',
-      icon: <Users className="w-8 h-8 text-accent" />
-    },
-    {
-      title: 'Student Visa',
-      description: 'Pursue your educational goals overseas. Guidance on application, documentation, and university requirements.',
-      icon: <GraduationCap className="w-8 h-8 text-accent" />
-    }
-  ];
+  const [visaOptions, setVisaOptions] = useState<VisaOption[]>([]);
+
+  useEffect(() => {
+    // In a real app, you might fetch this data or ensure it's up-to-date
+    // For this prototype, we'll directly use the mock data
+    // and rely on admin actions potentially modifying it (though updates won't persist across sessions)
+    setVisaOptions(mockVisaOptions); 
+  }, []);
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -58,26 +63,30 @@ export default function VisitVisaPage() {
             <h2 className="text-3xl md:text-4xl font-headline font-semibold text-primary mb-8 md:mb-10 text-center">
               Visa Types We Assist With
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-              {visaOptions.map((visa, index) => (
-                <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center animate-slideInUp h-full">
-                  <CardHeader className="items-center pt-6">
-                    {visa.icon}
-                    <CardTitle className="mt-4 text-2xl font-headline">{visa.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow px-4 pb-4">
-                    <CardDescription className="text-sm">
-                      {visa.description}
-                    </CardDescription>
-                  </CardContent>
-                  <div className="p-4 pt-0 w-full">
-                    <Button asChild className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
-                      <Link href="/#contact">Inquire Now <ArrowRight className="ml-2 h-4 w-4" /></Link>
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
+            {visaOptions.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                {visaOptions.map((visa) => (
+                  <Card key={visa.id} className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center text-center animate-slideInUp h-full">
+                    <CardHeader className="items-center pt-6">
+                      {getVisaIcon(visa.iconIdentifier)}
+                      <CardTitle className="mt-4 text-2xl font-headline">{visa.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow px-4 pb-4">
+                      <CardDescription className="text-sm">
+                        {visa.description}
+                      </CardDescription>
+                    </CardContent>
+                    <div className="p-4 pt-0 w-full">
+                      <Button asChild className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
+                        <Link href="/#contact">Inquire Now <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground">Visa services information is currently unavailable. Please check back later or contact us directly.</p>
+            )}
           </section>
 
           <section id="how-to-apply" className="mb-12 md:mb-16">

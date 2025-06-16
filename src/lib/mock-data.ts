@@ -44,6 +44,14 @@ export interface TeamMember {
   dataAiHint?: string;
 }
 
+export interface VisaOption {
+  id: string;
+  title: string;
+  description: string;
+  iconIdentifier: 'tourist' | 'business' | 'family' | 'student' | 'general';
+}
+
+
 export const DEFAULT_PROMO_IMAGE_URL = '/images/visa-promo.png';
 export const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
 
@@ -195,7 +203,7 @@ export let mockBlogArticles: BlogArticle[] = [
     slug: 'guide-budget-travel-southeast-asia',
     content: 'Traveling on a budget? Southeast Asia offers incredible experiences without breaking the bank. Here is how to navigate bustling markets, ancient temples, and stunning natural landscapes while keeping your expenses low.',
     author: 'Admin Backpacker',
-    publishedDate: '2024-06-22', // Made more recent
+    publishedDate: '2024-06-22', 
     status: 'published',
     tags: ['budget travel', 'asia', 'adventure'],
     featuredImage: 'https://placehold.co/600x400.png',
@@ -207,7 +215,7 @@ export let mockBlogArticles: BlogArticle[] = [
     slug: 'unveiling-new-luxury-packages-maldives',
     content: 'We are excited to announce our new lineup of luxury travel packages to the Maldives. Experience the world in style with overwater bungalows, private beaches, and world-class dining. Your ultimate escape awaits.',
     author: 'KosheliTravel Team',
-    publishedDate: '2024-07-01', // Made most recent
+    publishedDate: '2024-07-01', 
     status: 'published',
     tags: ['luxury', 'new', 'packages', 'maldives'],
     featuredImage: 'https://placehold.co/600x400.png',
@@ -274,3 +282,29 @@ export let mockTeamMembers: TeamMember[] = [
   }
 ];
 
+export let mockVisaOptions: VisaOption[] = [
+  {
+    id: 'visa-opt-1',
+    title: 'Tourist Visa',
+    description: 'Explore new destinations for leisure and tourism. We assist with applications for various countries.',
+    iconIdentifier: 'tourist'
+  },
+  {
+    id: 'visa-opt-2',
+    title: 'Business Visa',
+    description: 'Travel for business meetings, conferences, or exploring new ventures. Streamlined processing available.',
+    iconIdentifier: 'business'
+  },
+  {
+    id: 'visa-opt-3',
+    title: 'Family Visit Visa',
+    description: 'Visit your loved ones abroad. We help navigate the requirements for family sponsorship and invitations.',
+    iconIdentifier: 'family'
+  },
+  {
+    id: 'visa-opt-4',
+    title: 'Student Visa',
+    description: 'Pursue your educational goals overseas. Guidance on application, documentation, and university requirements.',
+    iconIdentifier: 'student'
+  }
+];
