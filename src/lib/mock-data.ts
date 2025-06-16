@@ -114,6 +114,19 @@ export const mockTravelPackages: TravelPackage[] = [
     budgetCategory: 'luxury',
     tags: ['europe', 'beach', 'romance', 'luxury']
   },
+  {
+    id: '7',
+    title: 'Dubai Desert & Skyline',
+    destination: 'Dubai, UAE',
+    description: 'Experience the modern marvels and traditional charm of Dubai. Includes a thrilling desert safari, visit to Burj Khalifa, and shopping at Dubai Mall.',
+    price: '$1950',
+    duration: '6 Days',
+    image: 'https://placehold.co/600x400.png',
+    dataAiHint: 'dubai skyline desert',
+    date: '2024-11-10',
+    budgetCategory: 'luxury',
+    tags: ['middle east', 'city break', 'adventure', 'luxury']
+  },
 ];
 
 export const mockTestimonials: Testimonial[] = [
