@@ -2,10 +2,11 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Menu, Plane } from 'lucide-react';
+import { Menu, Plane, Ticket } from 'lucide-react';
 
 const navLinks = [
   { href: '#packages', label: 'Packages' },
+  { href: '/visit-visa', label: 'Visit Visa' },
   { href: '#recommendations', label: 'AI Picks' },
   { href: '#our-team', label: 'Our Team' },
   { href: '#latest-blogs', label: 'Blog' },
@@ -22,13 +23,14 @@ export function Header() {
           <span className="font-headline text-2xl font-bold text-primary">KosheliTravel</span>
         </Link>
         
-        <nav className="hidden md:flex gap-6 items-center">
+        <nav className="hidden md:flex gap-x-5 lg:gap-x-6 items-center">
           {navLinks.map((link) => (
             <Link
-              key={link.href}
+              key={link.label}
               href={link.href}
-              className="text-sm font-medium text-foreground/70 transition-colors hover:text-primary"
+              className="text-sm font-medium text-foreground/70 transition-colors hover:text-primary flex items-center gap-1"
             >
+              {link.label === 'Visit Visa' && <Ticket className="h-4 w-4" />}
               {link.label}
             </Link>
           ))}
@@ -45,7 +47,7 @@ export function Header() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side="right" className="w-[280px] sm:w-[320px]">
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <nav className="flex flex-col gap-6 pt-8">
               <Link href="/" className="flex items-center gap-2 mb-4" aria-label="KosheliTravel Home">
@@ -54,14 +56,15 @@ export function Header() {
               </Link>
                 {navLinks.map((link) => (
                   <Link
-                    key={link.href}
+                    key={link.label}
                     href={link.href}
-                    className="text-lg font-medium text-foreground transition-colors hover:text-primary"
+                    className="text-lg font-medium text-foreground transition-colors hover:text-primary flex items-center gap-2"
                   >
+                     {link.label === 'Visit Visa' && <Ticket className="h-5 w-5" />}
                     {link.label}
                   </Link>
                 ))}
-                <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground mt-4">
+                <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground mt-4 py-3 text-base">
                   <Link href="#contact">Book Now</Link>
                 </Button>
               </nav>
@@ -72,4 +75,3 @@ export function Header() {
     </header>
   );
 }
-
