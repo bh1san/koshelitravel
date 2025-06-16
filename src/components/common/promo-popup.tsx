@@ -6,13 +6,34 @@ import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import { DEFAULT_PROMO_IMAGE_URL } from '@/lib/mock-data';
+
+const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
 
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
+  const [promoImageUrl, setPromoImageUrl] = useState(DEFAULT_PROMO_IMAGE_URL);
 
   useEffect(() => {
-    // Show the popup after the component mounts on the client
-    setIsOpen(true);
+    // This effect runs only on the client
+    setIsOpen(true); // Show the popup
+
+    const storedImageUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
+    if (storedImageUrl) {
+      setPromoImageUrl(storedImageUrl);
+    }
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === PROMO_IMAGE_STORAGE_KEY && event.newValue) {
+        setPromoImageUrl(event.newValue);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []); // Empty dependency array ensures this runs once on mount (per refresh)
 
   // Don't render the Dialog if it's not supposed to be open,
@@ -32,19 +53,14 @@ export function PromoPopup() {
         </DialogHeader>
         <div className="relative w-full aspect-[1080/1080]"> {/* Using the original image's aspect ratio */}
           <Image
-            src="/images/visa-promo.png"
-            alt="A2A Visa Change Promotion"
+            src={promoImageUrl} // Use state variable for dynamic image URL
+            alt="Special Promotion" // Generic alt text as image can change
             layout="fill"
             objectFit="contain" 
             priority // Consider if this image is critical for LCP
+            key={promoImageUrl} // Add key to force re-render if URL changes
           />
         </div>
-        {/* You can add a footer with a button if needed, for example:
-        <DialogFooter className="p-3 border-t bg-muted/40">
-          <Button onClick={() => setIsOpen(false)} variant="outline" size="sm">Close</Button>
-          <Button onClick={() => { setIsOpen(false); window.location.href = '#contact'; }} size="sm">Contact Us</Button>
-        </DialogFooter>
-        */}
       </DialogContent>
     </Dialog>
   );

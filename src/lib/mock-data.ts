@@ -35,6 +35,8 @@ export interface BlogArticle {
   dataAiHint?: string;
 }
 
+export const DEFAULT_PROMO_IMAGE_URL = '/images/visa-promo.png';
+
 export const mockTravelPackages: TravelPackage[] = [
   {
     id: '1',
