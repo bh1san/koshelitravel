@@ -1,7 +1,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Menu, Plane } from 'lucide-react';
 
 const navLinks = [
@@ -45,6 +45,7 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right">
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <nav className="flex flex-col gap-6 pt-8">
               <Link href="/" className="flex items-center gap-2 mb-4" aria-label="KosheliTravel Home">
                 <Plane className="h-6 w-6 text-primary" />
