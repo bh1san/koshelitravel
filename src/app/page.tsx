@@ -7,6 +7,7 @@ import { TestimonialsSection } from '@/components/common/testimonials-section';
 import { AiRecommendationsSection } from '@/components/ai/ai-recommendations-section';
 import { ContactSection } from '@/components/contact/contact-section';
 import { PromoPopup } from '@/components/common/promo-popup';
+import { OurTeamSection } from '@/components/common/our-team-section';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         <HeroSection />
         <TravelPackagesSection />
         <AiRecommendationsSection />
+        <OurTeamSection />
         <TestimonialsSection />
         <ContactSection />
       </main>

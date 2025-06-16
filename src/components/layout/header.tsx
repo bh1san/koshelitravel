@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -6,6 +7,7 @@ import { Menu, Plane } from 'lucide-react';
 const navLinks = [
   { href: '#packages', label: 'Packages' },
   { href: '#recommendations', label: 'AI Picks' },
+  { href: '#our-team', label: 'Our Team' },
   { href: '#testimonials', label: 'Testimonials' },
   { href: '#contact', label: 'Contact' },
 ];

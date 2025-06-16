@@ -27,6 +27,7 @@ export function Footer() {
           <ul className="space-y-2 text-sm">
             <li><Link href="#packages" className="hover:text-primary transition-colors">Travel Packages</Link></li>
             <li><Link href="#recommendations" className="hover:text-primary transition-colors">AI Recommendations</Link></li>
+            <li><Link href="#our-team" className="hover:text-primary transition-colors">Our Team</Link></li>
             <li><Link href="#testimonials" className="hover:text-primary transition-colors">Testimonials</Link></li>
             <li><Link href="#contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
             <li><Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
