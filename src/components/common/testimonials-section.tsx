@@ -1,8 +1,12 @@
+
 "use client";
 
 import { mockTestimonials } from '@/lib/mock-data';
 import { TestimonialCard } from './testimonial-card';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"; // Assuming carousel is available
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Star, ExternalLink } from 'lucide-react';
 
 export function TestimonialsSection() {
   return (
@@ -38,6 +42,32 @@ export function TestimonialsSection() {
         ) : (
           <p className="text-center text-lg text-muted-foreground">No testimonials yet. Be the first to share your adventure!</p>
         )}
+
+        <Card className="mt-12 max-w-2xl mx-auto shadow-xl animate-fadeIn bg-card">
+          <CardHeader className="items-center text-center">
+            <Star className="w-10 h-10 text-yellow-400 mb-2" /> {/* Standard yellow for star rating */}
+            <CardTitle className="font-headline text-2xl text-primary">Share Your Experience!</CardTitle>
+            <CardDescription className="text-card-foreground/80">
+              Loved your trip with KosheliTravel? Help others discover us by leaving a review on Google.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-3 text-base">
+              <a 
+                href="https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID_HERE" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Write a Google Review for KosheliTravel"
+              >
+                <ExternalLink className="mr-2 h-5 w-5" />
+                Write a Google Review
+              </a>
+            </Button>
+            <p className="text-xs text-muted-foreground mt-4 px-4">
+              Tip: Replace "YOUR_PLACE_ID_HERE" in the link's destination with your actual Google Place ID to direct users to your Google Business Profile review page. You can find your Place ID using <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Google's Place ID Finder</a>.
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );
