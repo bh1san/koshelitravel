@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Plane, Mail, Phone, Facebook, Instagram, Twitter } from 'lucide-react';
 import { NewsletterForm } from '@/components/common/newsletter-form';
@@ -38,7 +39,7 @@ export function Footer() {
           <NewsletterForm />
           <div className="mt-6 space-y-2 text-sm">
             <p className="flex items-center gap-2"><Mail size={16} className="text-primary"/> info@koshelitravel.com</p>
-            <p className="flex items-center gap-2"><Phone size={16} className="text-primary"/> +1 (555) 123-4567</p>
+            <p className="flex items-center gap-2"><Phone size={16} className="text-primary"/> +971 4 353 8898</p>
           </div>
         </div>
       </div>

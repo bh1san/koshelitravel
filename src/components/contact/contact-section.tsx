@@ -83,7 +83,7 @@ export function ContactSection() {
               <CardContent className="space-y-3 text-foreground/90">
                 <p className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-primary" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+971 4 353 8898</span>
                 </p>
                 <p className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-primary" />
