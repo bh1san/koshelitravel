@@ -36,6 +36,15 @@ export interface BlogArticle {
 }
 
 export const DEFAULT_PROMO_IMAGE_URL = '/images/visa-promo.png';
+export const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
+
+export const DEFAULT_BANNER_IMAGE_URL = 'https://placehold.co/1920x1080.png';
+export const DEFAULT_BANNER_TITLE = 'Your Next Adventure Awaits';
+export const DEFAULT_BANNER_SUBTITLE = 'Discover breathtaking destinations and create unforgettable memories with KosheliTravel. Personalized plans, expert advice, and exclusive deals.';
+export const BANNER_IMAGE_URL_STORAGE_KEY = 'kosheliTravelBannerImageUrl';
+export const BANNER_TITLE_STORAGE_KEY = 'kosheliTravelBannerTitle';
+export const BANNER_SUBTITLE_STORAGE_KEY = 'kosheliTravelBannerSubtitle';
+
 
 export const mockTravelPackages: TravelPackage[] = [
   {
