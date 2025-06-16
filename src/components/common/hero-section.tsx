@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -9,12 +10,12 @@ export function HeroSection() {
     <section className="relative bg-gradient-to-r from-primary/70 to-accent/70 text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center">
       <Image
         src="https://placehold.co/1920x1080.png"
-        alt="Breathtaking travel destination"
+        alt="Breathtaking travel destination in Dubai"
         layout="fill"
         objectFit="cover"
         quality={80}
         className="absolute inset-0 z-0 opacity-40"
-        data-ai-hint="travel landscape mountain"
+        data-ai-hint="dubai skyline"
         priority
       />
       <div className="container relative z-10 text-center animate-fadeIn">
