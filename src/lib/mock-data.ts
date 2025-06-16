@@ -40,7 +40,7 @@ export interface TeamMember {
   name: string;
   role: string;
   bio: string;
-  image: string;
+  image: string; // URL for the image
   dataAiHint?: string;
 }
 
@@ -215,7 +215,7 @@ export let mockBlogArticles: BlogArticle[] = [
   }
 ];
 
-export const mockTeamMembers: TeamMember[] = [
+export let mockTeamMembers: TeamMember[] = [
   {
     id: 'team-1',
     name: 'Alice Wonderland',

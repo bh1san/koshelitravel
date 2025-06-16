@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Plane, LayoutDashboard, Package, FileText, Settings, ImageUp, GalleryHorizontalEnd } from 'lucide-react';
+import { Plane, LayoutDashboard, Package, FileText, Settings, ImageUp, GalleryHorizontalEnd, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -11,6 +11,7 @@ const adminNavLinks = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/packages', label: 'Manage Packages', icon: Package },
   { href: '/admin/blogs', label: 'Manage Blogs', icon: FileText },
+  { href: '/admin/team', label: 'Manage Team', icon: Users },
   { href: '/admin/promo-settings', label: 'Promo Popup', icon: ImageUp },
   { href: '/admin/banner-settings', label: 'Banner Settings', icon: GalleryHorizontalEnd },
   // Future links can be added here e.g. Settings
