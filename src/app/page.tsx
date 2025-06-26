@@ -4,7 +4,7 @@ import { Footer } from '@/components/layout/footer';
 import { HeroSection } from '@/components/common/hero-section';
 import { TravelPackagesSection } from '@/components/travel/travel-packages-section';
 import { TestimonialsSection } from '@/components/common/testimonials-section';
-// import { AiRecommendationsSection } from '@/components/ai/ai-recommendations-section';
+import { AiRecommendationsSection } from '@/components/ai/ai-recommendations-section';
 import { ContactSection } from '@/components/contact/contact-section';
 import { OurTeamSection } from '@/components/common/our-team-section';
 import { LatestBlogsSection } from '@/components/blog/latest-blogs-section';
@@ -19,7 +19,7 @@ export default function Home() {
       <main className="flex-grow">
         <HeroSection />
         <TravelPackagesSection />
-        {/* <AiRecommendationsSection /> */}
+        <AiRecommendationsSection />
         <OurTeamSection />
         <LatestBlogsSection />
         <TestimonialsSection />
