@@ -6,7 +6,7 @@ import { TravelPackagesSection } from '@/components/travel/travel-packages-secti
 import { TestimonialsSection } from '@/components/common/testimonials-section';
 import { AiRecommendationsSection } from '@/components/ai/ai-recommendations-section';
 import { ContactSection } from '@/components/contact/contact-section';
-import { PromoPopup } from '@/components/common/promo-popup';
+// import { PromoPopup } from '@/components/common/promo-popup';
 import { OurTeamSection } from '@/components/common/our-team-section';
 import { LatestBlogsSection } from '@/components/blog/latest-blogs-section';
 
@@ -24,8 +24,7 @@ export default function Home() {
         <ContactSection />
       </main>
       <Footer />
-      <PromoPopup />
+      {/* <PromoPopup /> */}
     </div>
   );
 }
-
