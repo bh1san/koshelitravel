@@ -52,7 +52,7 @@ export interface VisaOption {
 }
 
 
-export const DEFAULT_PROMO_IMAGE_URL = '/images/visa-promo.png';
+export const DEFAULT_PROMO_IMAGE_URL = 'https://placehold.co/1080x1080.png';
 export const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
 
 export const DEFAULT_BANNER_IMAGE_URL = 'https://placehold.co/1920x1080.png';
