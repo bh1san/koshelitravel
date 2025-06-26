@@ -17,6 +17,9 @@ const nextConfig = {
       },
     ],
   },
+  experimental: {
+    serverComponentsExternalPackages: ['@opentelemetry/instrumentation', 'handlebars'],
+  },
 };
 
 module.exports = nextConfig;
