@@ -18,7 +18,12 @@ const nextConfig = {
     ],
   },
   experimental: {
-    serverComponentsExternalPackages: ['@opentelemetry/instrumentation', 'handlebars'],
+    serverComponentsExternalPackages: [
+      '@opentelemetry/instrumentation',
+      '@opentelemetry/sdk-node',
+      'handlebars',
+      'require-in-the-middle'
+    ],
   },
 };
 
