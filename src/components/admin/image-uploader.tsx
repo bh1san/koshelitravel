@@ -51,16 +51,18 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'gen
 
       const result = await response.json();
 
-      if (response.ok) {
+      if (response.ok && result.success) {
         onUploadComplete(result.url);
         setUploadStatus('success');
         setFile(null);
       } else {
-        throw new Error(result.message || 'Upload failed.');
+        // This will now throw an error with the server's message
+        throw new Error(result.message || 'Upload failed due to an unknown server issue.');
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
-      setError(err.message || 'Upload failed. Check the console for details.');
+      // The user will see the specific error from the server
+      setError(err.message || 'A client-side error occurred. Please try again.');
       setUploadStatus('error');
     }
   };
