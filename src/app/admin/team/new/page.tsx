@@ -9,9 +9,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, PlusCircle, UserPlus } from 'lucide-react';
+import { ArrowLeft, Save, UserPlus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { mockTeamMembers, type TeamMember } from '@/lib/mock-data'; 
+import { ImageUploader } from '@/components/admin/image-uploader';
 
 export default function NewTeamMemberPage() {
   const router = useRouter();
@@ -74,36 +75,14 @@ export default function NewTeamMemberPage() {
               <Textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} rows={4} required />
             </div>
             <div>
-              <Label htmlFor="image">Image URL</Label>
-              <Input 
-                id="image" 
-                type="url"
-                value={image} 
-                onChange={(e) => setImage(e.target.value)} 
-                placeholder="https://example.com/member-photo.png" 
+              <Label>Member Photo</Label>
+              <ImageUploader 
+                onUploadComplete={setImage}
+                currentImageUrl={image}
+                folder="team"
               />
-               <p className="text-xs text-muted-foreground mt-1">Provide a URL for the team member's photo. Defaults to placeholder if empty.</p>
+               <p className="text-xs text-muted-foreground mt-2">Upload a photo for the new team member. Defaults to a placeholder if left empty.</p>
             </div>
-            {image && (
-                <div className="mt-2">
-                    <Label>Image Preview:</Label>
-                    <div className="mt-1 border rounded-md p-2 flex justify-center items-center bg-muted/30 max-h-48 overflow-hidden">
-                        <img 
-                            src={image} 
-                            alt="Team Member Preview" 
-                            className="max-w-full max-h-40 object-contain rounded"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                                const errorMsg = document.createElement('p');
-                                errorMsg.textContent = 'Preview not available or image URL is invalid.';
-                                errorMsg.className = 'text-destructive text-xs';
-                                target.parentNode?.appendChild(errorMsg);
-                            }}
-                        />
-                    </div>
-                </div>
-            )}
             <div>
               <Label htmlFor="dataAiHint">Image AI Hint</Label>
               <Input 

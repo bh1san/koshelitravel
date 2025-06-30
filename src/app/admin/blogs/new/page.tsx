@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowLeft, Save, PlusCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { mockBlogArticles, type BlogArticle } from '@/lib/mock-data'; 
+import { ImageUploader } from '@/components/admin/image-uploader';
 
 export default function NewBlogPostPage() {
   const router = useRouter();
@@ -101,35 +102,13 @@ export default function NewBlogPostPage() {
               <Input id="author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
             </div>
             <div>
-              <Label htmlFor="featuredImage">Featured Image URL</Label>
-              <Input 
-                id="featuredImage" 
-                type="url"
-                value={featuredImage} 
-                onChange={(e) => setFeaturedImage(e.target.value)} 
-                placeholder="https://example.com/your-image.png" 
+              <Label>Featured Image</Label>
+               <ImageUploader 
+                onUploadComplete={setFeaturedImage}
+                currentImageUrl={featuredImage}
+                folder="blogs"
               />
             </div>
-            {featuredImage && (
-                <div className="mt-2">
-                    <Label>Image Preview:</Label>
-                    <div className="mt-1 border rounded-md p-2 flex justify-center items-center bg-muted/30 max-h-64 overflow-hidden">
-                        <img 
-                            src={featuredImage} 
-                            alt="Featured Image Preview" 
-                            className="max-w-full max-h-56 object-contain rounded"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                                const errorMsg = document.createElement('p');
-                                errorMsg.textContent = 'Preview not available or image URL is invalid.';
-                                errorMsg.className = 'text-destructive text-xs';
-                                target.parentNode?.appendChild(errorMsg);
-                            }}
-                        />
-                    </div>
-                </div>
-            )}
             <div>
               <Label htmlFor="featuredImageAiHint">Featured Image AI Hint</Label>
               <Input 

@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Save, Edit as EditIcon } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { ImageUploader } from '@/components/admin/image-uploader';
 
 export default function EditPackagePage() {
   const router = useRouter();
@@ -125,30 +126,13 @@ export default function EditPackagePage() {
               />
             </div>
             <div>
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input id="imageUrl" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
-              <p className="text-xs text-muted-foreground mt-1">URL of the package image (e.g., https://placehold.co/600x400.png).</p>
+              <Label>Package Image</Label>
+               <ImageUploader 
+                onUploadComplete={setImageUrl}
+                currentImageUrl={imageUrl}
+                folder="packages"
+              />
             </div>
-            {imageUrl && (
-                <div className="mt-2">
-                    <Label>Image Preview:</Label>
-                    <div className="mt-1 border rounded-md p-2 flex justify-center items-center bg-muted/30 max-h-64 overflow-hidden">
-                        <img 
-                            src={imageUrl} 
-                            alt="Package Preview" 
-                            className="max-w-full max-h-56 object-contain rounded"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
-                                const errorMsg = document.createElement('p');
-                                errorMsg.textContent = 'Preview not available or image URL is invalid.';
-                                errorMsg.className = 'text-destructive text-xs';
-                                target.parentNode?.appendChild(errorMsg);
-                            }}
-                        />
-                    </div>
-                </div>
-            )}
             <div>
               <Label htmlFor="imageAiHint">Image AI Hint</Label>
               <Input 

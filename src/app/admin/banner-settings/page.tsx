@@ -17,6 +17,7 @@ import {
   BANNER_TITLE_STORAGE_KEY,
   BANNER_SUBTITLE_STORAGE_KEY
 } from '@/lib/mock-data';
+import { ImageUploader } from '@/components/admin/image-uploader';
 
 export default function BannerSettingsPage() {
   const [bannerImageUrl, setBannerImageUrl] = useState('');
@@ -85,32 +86,16 @@ export default function BannerSettingsPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="bannerImageUrl">Banner Image URL</Label>
-              <Input 
-                id="bannerImageUrl" 
-                type="url"
-                value={bannerImageUrl} 
-                onChange={(e) => setBannerImageUrl(e.target.value)} 
-                placeholder="https://example.com/your-banner-image.png"
-                required 
+              <Label>Banner Image</Label>
+              <ImageUploader
+                onUploadComplete={setBannerImageUrl}
+                currentImageUrl={bannerImageUrl}
+                folder="banners"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Enter the full URL of the image for the hero banner.
+              <p className="text-xs text-muted-foreground mt-2">
+                Upload a new banner image. The new image will be used after saving.
               </p>
             </div>
-             {bannerImageUrl && (
-                <div className="mt-4">
-                    <Label>Current Image Preview:</Label>
-                    <div className="mt-2 border rounded-md p-2 flex justify-center items-center bg-muted/30 max-h-64 overflow-hidden">
-                        <img 
-                            src={bannerImageUrl} 
-                            alt="Banner Preview" 
-                            className="max-w-full max-h-56 object-contain rounded" 
-                            onError={(e) => (e.currentTarget.style.display = 'none')}
-                        />
-                    </div>
-                </div>
-            )}
             <div>
               <Label htmlFor="bannerTitle">Banner Title</Label>
               <Input 

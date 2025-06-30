@@ -15,13 +15,18 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   experimental: {
     serverComponentsExternalPackages: [
       '@opentelemetry/instrumentation',
       '@opentelemetry/sdk-node',
-      '@opentelemetry/exporter-jaeger',
       'handlebars',
       'require-in-the-middle'
     ],

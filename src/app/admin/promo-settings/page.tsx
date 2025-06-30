@@ -4,11 +4,11 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ImageUp, Save } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { DEFAULT_PROMO_IMAGE_URL } from '@/lib/mock-data';
+import { ImageUploader } from '@/components/admin/image-uploader';
 
 const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
 
@@ -72,32 +72,16 @@ export default function PromoSettingsPage() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="promoImageUrl">Promotional Image URL</Label>
-              <Input 
-                id="promoImageUrl" 
-                type="url"
-                value={promoImageUrl} 
-                onChange={(e) => setPromoImageUrl(e.target.value)} 
-                placeholder="https://example.com/your-promo-image.png"
-                required 
+              <Label>Promotional Image</Label>
+               <ImageUploader 
+                onUploadComplete={setPromoImageUrl}
+                currentImageUrl={promoImageUrl}
+                folder="promo"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Enter the full URL of the image you want to display in the popup.
+              <p className="text-xs text-muted-foreground mt-2">
+                Upload an image to be displayed in the site-wide promotional popup.
               </p>
             </div>
-            {promoImageUrl && (
-                <div className="mt-4">
-                    <Label>Current Image Preview:</Label>
-                    <div className="mt-2 border rounded-md p-2 flex justify-center items-center bg-muted/30 max-h-64 overflow-hidden">
-                        <img 
-                            src={promoImageUrl} 
-                            alt="Promo Preview" 
-                            className="max-w-full max-h-56 object-contain rounded" 
-                            onError={(e) => (e.currentTarget.style.display = 'none')}
-                        />
-                    </div>
-                </div>
-            )}
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
