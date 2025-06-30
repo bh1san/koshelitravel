@@ -22,6 +22,10 @@ export default function PromoSettingsPage() {
     setPromoImageUrl(storedUrl || DEFAULT_PROMO_IMAGE_URL);
   }, []);
 
+  const handleImageUploadComplete = (url: string) => {
+    setPromoImageUrl(url);
+  };
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
@@ -46,7 +50,7 @@ export default function PromoSettingsPage() {
 
       toast({
         title: "Promo Image Updated",
-        description: "The promotional popup image URL has been saved.",
+        description: "The promotional popup image has been saved.",
       });
     } catch (error) {
       console.error("Failed to save promo image URL:", error);
@@ -72,12 +76,12 @@ export default function PromoSettingsPage() {
             <div>
               <Label>Promotional Image</Label>
                <ImageUploader 
-                onUploadComplete={setPromoImageUrl}
+                onUploadComplete={handleImageUploadComplete}
                 currentImageUrl={promoImageUrl}
                 folder="promo"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Upload an image for the site-wide promotional popup.
+                Upload an image for the site-wide promotional popup. The new image will be used after saving.
               </p>
             </div>
           </CardContent>

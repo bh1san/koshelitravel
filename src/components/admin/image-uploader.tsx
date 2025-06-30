@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { UploadCloud, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
@@ -17,6 +17,11 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'gen
   const [file, setFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(currentImageUrl);
+
+  useEffect(() => {
+    setPreviewUrl(currentImageUrl);
+  }, [currentImageUrl]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -53,15 +58,14 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'gen
 
       if (response.ok && result.success) {
         onUploadComplete(result.url);
+        setPreviewUrl(result.url); // Immediately update preview
         setUploadStatus('success');
         setFile(null);
       } else {
-        // This will now throw an error with the server's message
         throw new Error(result.message || 'Upload failed due to an unknown server issue.');
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
-      // The user will see the specific error from the server
       setError(err.message || 'A client-side error occurred. Please try again.');
       setUploadStatus('error');
     }
@@ -97,13 +101,13 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'gen
         </div>
       )}
       
-       {currentImageUrl && (
+       {previewUrl && (
           <div className="mt-4">
               <Label>Current Image Preview:</Label>
               <div className="mt-2 border rounded-md p-2 flex justify-center items-center bg-background max-h-64 overflow-hidden">
                   <img 
-                      key={currentImageUrl}
-                      src={currentImageUrl} 
+                      key={previewUrl}
+                      src={previewUrl} 
                       alt="Current image preview" 
                       className="max-w-full max-h-56 object-contain rounded" 
                       onError={(e) => {
