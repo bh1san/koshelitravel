@@ -55,7 +55,6 @@ export default function BannerSettingsPage() {
       localStorage.setItem(BANNER_TITLE_STORAGE_KEY, bannerTitle);
       localStorage.setItem(BANNER_SUBTITLE_STORAGE_KEY, bannerSubtitle);
       
-      // Dispatch storage events so other components (like HeroSection) can react
       window.dispatchEvent(new StorageEvent('storage', { key: BANNER_IMAGE_URL_STORAGE_KEY, newValue: bannerImageUrl }));
       window.dispatchEvent(new StorageEvent('storage', { key: BANNER_TITLE_STORAGE_KEY, newValue: bannerTitle }));
       window.dispatchEvent(new StorageEvent('storage', { key: BANNER_SUBTITLE_STORAGE_KEY, newValue: bannerSubtitle }));
@@ -93,7 +92,7 @@ export default function BannerSettingsPage() {
                 folder="banners"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Upload a new banner image. The new image will be used after saving.
+                Upload a new image for the hero banner. The new image will be used after saving.
               </p>
             </div>
             <div>

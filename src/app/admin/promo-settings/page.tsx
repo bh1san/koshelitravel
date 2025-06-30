@@ -18,7 +18,6 @@ export default function PromoSettingsPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Load current URL from localStorage or use default
     const storedUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
     setPromoImageUrl(storedUrl || DEFAULT_PROMO_IMAGE_URL);
   }, []);
@@ -39,11 +38,10 @@ export default function PromoSettingsPage() {
 
     try {
       localStorage.setItem(PROMO_IMAGE_STORAGE_KEY, promoImageUrl);
-      // Manually dispatch a storage event so other tabs/components can react if needed
       window.dispatchEvent(new StorageEvent('storage', {
         key: PROMO_IMAGE_STORAGE_KEY,
         newValue: promoImageUrl,
-        oldValue: localStorage.getItem(PROMO_IMAGE_STORAGE_KEY) // old value before setting
+        oldValue: localStorage.getItem(PROMO_IMAGE_STORAGE_KEY)
       }));
 
       toast({
@@ -79,7 +77,7 @@ export default function PromoSettingsPage() {
                 folder="promo"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Upload an image to be displayed in the site-wide promotional popup.
+                Upload an image for the site-wide promotional popup.
               </p>
             </div>
           </CardContent>
