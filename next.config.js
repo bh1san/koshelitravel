@@ -21,6 +21,7 @@ const nextConfig = {
     serverComponentsExternalPackages: [
       '@opentelemetry/instrumentation',
       '@opentelemetry/sdk-node',
+      '@opentelemetry/exporter-jaeger',
       'handlebars',
       'require-in-the-middle'
     ],
