@@ -39,33 +39,24 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'gen
     setUploadStatus('uploading');
     setError(null);
 
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folder);
+
     try {
-      // Convert file to Base64 Data URL
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const base64File = reader.result;
-        
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ file: base64File, folder }),
-        });
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
 
-        const result = await response.json();
+      const result = await response.json();
 
-        if (response.ok) {
-          onUploadComplete(result.url);
-          setUploadStatus('success');
-          setFile(null);
-        } else {
-          throw new Error(result.message || 'Upload failed.');
-        }
-      };
-      reader.onerror = (error) => {
-        throw new Error('Could not read the file.');
+      if (response.ok) {
+        onUploadComplete(result.url);
+        setUploadStatus('success');
+        setFile(null);
+      } else {
+        throw new Error(result.message || 'Upload failed.');
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
