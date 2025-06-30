@@ -2,23 +2,19 @@
 'use client';
 
 import { useState } from 'react';
-import { storage } from '@/lib/firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { UploadCloud, CheckCircle, AlertTriangle } from 'lucide-react';
+import { UploadCloud, CheckCircle, AlertTriangle, Loader2 } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 
 interface ImageUploaderProps {
   onUploadComplete: (url: string) => void;
   currentImageUrl?: string;
-  folder?: string; // Optional folder in Firebase Storage
+  folder?: string; // e.g., 'banners', 'blogs'
 }
 
-export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'uploads' }: ImageUploaderProps) {
+export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'general' }: ImageUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
 
@@ -37,45 +33,45 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'upl
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!file) return;
 
     setUploadStatus('uploading');
-    setUploadProgress(0);
     setError(null);
 
-    const storageRef = ref(storage, `${folder}/${Date.now()}_${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    try {
+      // Convert file to Base64 Data URL
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64File = reader.result;
+        
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ file: base64File, folder }),
+        });
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress);
-      },
-      (error) => {
-        console.error('Upload failed:', error);
-        switch (error.code) {
-          case 'storage/unauthorized':
-            setError('Permission denied. Please check your Firebase Storage security rules to allow public writes.');
-            break;
-          case 'storage/canceled':
-            setError('Upload canceled.');
-            break;
-          default:
-            setError('Upload failed. Check the console for details or try again.');
-            break;
-        }
-        setUploadStatus('error');
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          onUploadComplete(downloadURL);
+        const result = await response.json();
+
+        if (response.ok) {
+          onUploadComplete(result.url);
           setUploadStatus('success');
           setFile(null);
-        });
+        } else {
+          throw new Error(result.message || 'Upload failed.');
+        }
+      };
+      reader.onerror = (error) => {
+        throw new Error('Could not read the file.');
       }
-    );
+    } catch (err: any) {
+      console.error('Upload failed:', err);
+      setError(err.message || 'Upload failed. Check the console for details.');
+      setUploadStatus('error');
+    }
   };
 
   return (
@@ -84,18 +80,15 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'upl
         <div className="flex items-center gap-2">
             <Input type="file" accept="image/png, image/jpeg, image/webp, image/gif" onChange={handleFileChange} className="flex-grow bg-background" />
             <Button onClick={handleUpload} disabled={!file || uploadStatus === 'uploading'} type="button" variant="secondary">
-                <UploadCloud className="mr-2 h-4 w-4" />
-                Upload
+                {uploadStatus === 'uploading' ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <UploadCloud className="mr-2 h-4 w-4" />
+                )}
+                {uploadStatus === 'uploading' ? 'Uploading...' : 'Upload'}
             </Button>
         </div>
       </div>
-
-      {uploadStatus === 'uploading' && (
-        <div>
-          <Progress value={uploadProgress} className="w-full" />
-          <p className="text-xs text-muted-foreground mt-1">Uploading... {Math.round(uploadProgress)}%</p>
-        </div>
-      )}
 
       {uploadStatus === 'success' && (
         <div className="flex items-center gap-2 text-green-600">
