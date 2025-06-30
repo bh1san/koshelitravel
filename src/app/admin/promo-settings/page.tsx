@@ -85,7 +85,7 @@ export default function PromoSettingsPage() {
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {isLoading ? 'Saving...' : <><Save className="mr-2 h-4 w-4" /> Save Image URL</>}
+              {isLoading ? 'Saving...' : <><Save className="mr-2 h-4 w-4" /> Save Image</>}
             </Button>
           </CardFooter>
         </form>
