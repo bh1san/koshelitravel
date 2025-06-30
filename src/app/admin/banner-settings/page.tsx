@@ -36,6 +36,10 @@ export default function BannerSettingsPage() {
     setBannerSubtitle(storedSubtitle || DEFAULT_BANNER_SUBTITLE);
   }, []);
 
+  const handleImageUploadComplete = (url: string) => {
+    setBannerImageUrl(url);
+  };
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
@@ -87,7 +91,7 @@ export default function BannerSettingsPage() {
             <div>
               <Label>Banner Image</Label>
               <ImageUploader
-                onUploadComplete={setBannerImageUrl}
+                onUploadComplete={handleImageUploadComplete}
                 currentImageUrl={bannerImageUrl}
                 folder="banners"
               />

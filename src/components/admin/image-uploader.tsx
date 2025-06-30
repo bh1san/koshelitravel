@@ -106,6 +106,7 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'upl
               <Label>Current Image Preview:</Label>
               <div className="mt-2 border rounded-md p-2 flex justify-center items-center bg-background max-h-64 overflow-hidden">
                   <img 
+                      key={currentImageUrl}
                       src={currentImageUrl} 
                       alt="Current image preview" 
                       className="max-w-full max-h-56 object-contain rounded" 
