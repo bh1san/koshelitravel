@@ -55,14 +55,24 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'upl
       },
       (error) => {
         console.error('Upload failed:', error);
-        setError('Upload failed. Please try again.');
+        switch (error.code) {
+          case 'storage/unauthorized':
+            setError('Permission denied. Please check your Firebase Storage security rules to allow public writes.');
+            break;
+          case 'storage/canceled':
+            setError('Upload canceled.');
+            break;
+          default:
+            setError('Upload failed. Check the console for details or try again.');
+            break;
+        }
         setUploadStatus('error');
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           onUploadComplete(downloadURL);
           setUploadStatus('success');
-          setFile(null); // Clear file after successful upload
+          setFile(null);
         });
       }
     );
