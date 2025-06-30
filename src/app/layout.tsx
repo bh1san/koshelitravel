@@ -1,5 +1,7 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'KosheliTravel - Your Next Adventure Awaits',
@@ -15,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         {children}
+        <Toaster />
       </body>
     </html>
   );
