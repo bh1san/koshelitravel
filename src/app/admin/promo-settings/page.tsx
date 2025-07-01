@@ -9,6 +9,7 @@ import { ImageUp, Save } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { DEFAULT_PROMO_IMAGE_URL } from '@/lib/mock-data';
 import { ImageUploader } from '@/components/admin/image-uploader';
+import { getChannel } from '@/lib/channel';
 
 const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
 
@@ -42,11 +43,16 @@ export default function PromoSettingsPage() {
 
     try {
       localStorage.setItem(PROMO_IMAGE_STORAGE_KEY, promoImageUrl);
-      window.dispatchEvent(new StorageEvent('storage', {
-        key: PROMO_IMAGE_STORAGE_KEY,
-        newValue: promoImageUrl,
-        oldValue: localStorage.getItem(PROMO_IMAGE_STORAGE_KEY)
-      }));
+      
+      const channel = getChannel();
+      if (channel) {
+        channel.postMessage({
+          type: 'UPDATE_PROMO',
+          payload: {
+            imageUrl: promoImageUrl,
+          },
+        });
+      }
 
       toast({
         title: "Promo Image Updated",
@@ -69,7 +75,7 @@ export default function PromoSettingsPage() {
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><ImageUp /> Promotional Popup Settings</CardTitle>
-          <CardDescription>Update the image displayed in the site-wide promotional popup.</CardDescription>
+          <CardDescription>Update the image displayed in the site-wide promotional popup. The new image will appear live for users.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -81,7 +87,7 @@ export default function PromoSettingsPage() {
                 folder="promo"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Upload an image for the site-wide promotional popup. The new image will be used after saving.
+                Upload an image for the site-wide promotional popup.
               </p>
             </div>
           </CardContent>

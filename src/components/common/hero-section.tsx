@@ -13,6 +13,7 @@ import {
   BANNER_TITLE_STORAGE_KEY,
   BANNER_SUBTITLE_STORAGE_KEY
 } from '@/lib/mock-data';
+import { getChannel } from '@/lib/channel';
 
 export function HeroSection() {
   const [imageUrl, setImageUrl] = useState('');
@@ -21,6 +22,7 @@ export function HeroSection() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    // This runs once on component mount in the browser
     const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY);
     const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY);
     const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY);
@@ -30,25 +32,31 @@ export function HeroSection() {
     setSubtitle(storedSubtitle || DEFAULT_BANNER_SUBTITLE);
     setIsClient(true);
 
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === BANNER_IMAGE_URL_STORAGE_KEY && event.newValue) {
-        setImageUrl(event.newValue);
-      }
-      if (event.key === BANNER_TITLE_STORAGE_KEY && event.newValue) {
-        setTitle(event.newValue);
-      }
-      if (event.key === BANNER_SUBTITLE_STORAGE_KEY && event.newValue) {
-        setSubtitle(event.newValue);
+    // This listens for live updates from other tabs (e.g., the admin panel)
+    const channel = getChannel();
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'UPDATE_BANNER') {
+        const { imageUrl, title, subtitle } = event.data.payload;
+        if (imageUrl) setImageUrl(imageUrl);
+        if (title) setTitle(title);
+        if (subtitle) setSubtitle(subtitle);
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    if (channel) {
+      channel.addEventListener('message', handleMessage);
+    }
+    
+    // Cleanup the listener when the component unmounts
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      if (channel) {
+        channel.removeEventListener('message', handleMessage);
+      }
     };
   }, []);
 
   if (!isClient) {
+    // Show a skeleton loader on the server and initial client render
     return (
       <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-muted">
          <Skeleton className="absolute inset-0" />
@@ -62,7 +70,7 @@ export function HeroSection() {
 
   return (
     <section
-      key={imageUrl}
+      key={imageUrl} // Using key forces a re-mount on image change, ensuring smooth transitions
       className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500"
       style={{ backgroundImage: `url('${imageUrl}')` }}
     >

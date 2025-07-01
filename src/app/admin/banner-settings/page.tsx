@@ -18,6 +18,7 @@ import {
   BANNER_SUBTITLE_STORAGE_KEY
 } from '@/lib/mock-data';
 import { ImageUploader } from '@/components/admin/image-uploader';
+import { getChannel } from '@/lib/channel';
 
 export default function BannerSettingsPage() {
   const [bannerImageUrl, setBannerImageUrl] = useState('');
@@ -59,9 +60,17 @@ export default function BannerSettingsPage() {
       localStorage.setItem(BANNER_TITLE_STORAGE_KEY, bannerTitle);
       localStorage.setItem(BANNER_SUBTITLE_STORAGE_KEY, bannerSubtitle);
       
-      window.dispatchEvent(new StorageEvent('storage', { key: BANNER_IMAGE_URL_STORAGE_KEY, newValue: bannerImageUrl }));
-      window.dispatchEvent(new StorageEvent('storage', { key: BANNER_TITLE_STORAGE_KEY, newValue: bannerTitle }));
-      window.dispatchEvent(new StorageEvent('storage', { key: BANNER_SUBTITLE_STORAGE_KEY, newValue: bannerSubtitle }));
+      const channel = getChannel();
+      if (channel) {
+        channel.postMessage({
+          type: 'UPDATE_BANNER',
+          payload: {
+            imageUrl: bannerImageUrl,
+            title: bannerTitle,
+            subtitle: bannerSubtitle,
+          },
+        });
+      }
 
       toast({
         title: "Banner Settings Updated",
@@ -84,7 +93,7 @@ export default function BannerSettingsPage() {
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><GalleryHorizontalEnd /> Hero Banner Settings</CardTitle>
-          <CardDescription>Update the image, title, and subtitle for the main hero banner.</CardDescription>
+          <CardDescription>Update the image, title, and subtitle for the main hero banner on your homepage. Changes will appear live.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -96,7 +105,7 @@ export default function BannerSettingsPage() {
                 folder="banners"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Upload a new image for the hero banner. The new image will be used after saving.
+                Upload a new image for the hero banner.
               </p>
             </div>
             <div>

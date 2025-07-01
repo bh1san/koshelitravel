@@ -6,13 +6,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { DEFAULT_PROMO_IMAGE_URL } from '@/lib/mock-data';
+import { getChannel } from '@/lib/channel';
 
 const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
 const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const [promoImageUrl, setPromoImageUrl] = useState(DEFAULT_PROMO_IMAGE_URL);
+  const [promoImageUrl, setPromoImageUrl] = useState('');
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -24,31 +25,39 @@ export function PromoPopup() {
         setIsOpen(true);
         sessionStorage.setItem(POPUP_SEEN_SESSION_KEY, 'true');
       }, 2000); // 2-second delay
-      return () => clearTimeout(timer); // Cleanup timer
+      return () => clearTimeout(timer);
     }
   }, []);
 
   useEffect(() => {
     if(!isClient) return;
 
+    // Load initial image from localStorage
     const storedImageUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
-    if (storedImageUrl) {
-      setPromoImageUrl(storedImageUrl);
+    setPromoImageUrl(storedImageUrl || DEFAULT_PROMO_IMAGE_URL);
+
+    // Listen for live updates
+    const channel = getChannel();
+    const handleMessage = (event: MessageEvent) => {
+        if (event.data && event.data.type === 'UPDATE_PROMO') {
+            const { imageUrl } = event.data.payload;
+            if (imageUrl) setPromoImageUrl(imageUrl);
+        }
+    };
+    
+    if (channel) {
+        channel.addEventListener('message', handleMessage);
     }
 
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === PROMO_IMAGE_STORAGE_KEY && event.newValue) {
-        setPromoImageUrl(event.newValue);
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
+    // Cleanup listener
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      if (channel) {
+        channel.removeEventListener('message', handleMessage);
+      }
     };
   }, [isClient]);
 
-  if (!isClient || !isOpen) {
+  if (!isClient || !isOpen || !promoImageUrl) {
     return null;
   }
 
