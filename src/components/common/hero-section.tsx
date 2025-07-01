@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { 
@@ -20,6 +19,7 @@ export function HeroSection() {
   const [subtitle, setSubtitle] = useState(DEFAULT_BANNER_SUBTITLE);
 
   useEffect(() => {
+    // This effect runs on the client to get the latest values
     const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY);
     const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY);
     const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY);
@@ -47,17 +47,12 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative bg-gradient-to-r from-primary/70 to-accent/70 text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center">
-      <Image
-        src={imageUrl}
-        alt="Breathtaking travel destination"
-        layout="fill"
-        objectFit="cover"
-        quality={80}
-        className="absolute inset-0 z-0 opacity-40"
-        priority
-        key={imageUrl} // Add key to force re-render if URL changes
-      />
+    <section
+      key={imageUrl} // Add key to force re-render if URL changes
+      className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center"
+      style={{ backgroundImage: `url('${imageUrl}')` }}
+    >
+      <div className="absolute inset-0 bg-black/60 z-0"></div> {/* Dark overlay for text readability */}
       <div className="container relative z-10 text-center animate-fadeIn">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-6 text-white shadow-text">
           {title}

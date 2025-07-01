@@ -2,13 +2,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { DEFAULT_PROMO_IMAGE_URL } from '@/lib/mock-data';
 
 const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
+const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +16,13 @@ export function PromoPopup() {
 
   useEffect(() => {
     // This effect runs only on the client
-    setIsOpen(true); // Show the popup
+    const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
+    
+    // Only show the popup if the user hasn't seen it in this session
+    if (!hasSeenPopup) {
+      setIsOpen(true);
+      sessionStorage.setItem(POPUP_SEEN_SESSION_KEY, 'true');
+    }
 
     const storedImageUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
     if (storedImageUrl) {
@@ -34,10 +40,9 @@ export function PromoPopup() {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []); // Empty dependency array ensures this runs once on mount (per refresh)
+  }, []); // Empty dependency array ensures this runs once on mount
 
-  // Don't render the Dialog if it's not supposed to be open,
-  // this helps avoid potential hydration issues with Dialogs.
+  // Don't render the Dialog if it's not supposed to be open
   if (!isOpen) {
     return null;
   }
@@ -51,13 +56,11 @@ export function PromoPopup() {
             <X className="h-4 w-4" />
           </Button>
         </DialogHeader>
-        <div className="relative w-full aspect-[1080/1080]"> {/* Using the original image's aspect ratio */}
-          <Image
-            src={promoImageUrl} // Use state variable for dynamic image URL
-            alt="Special Promotion" // Generic alt text as image can change
-            layout="fill"
-            objectFit="contain" 
-            priority // Consider if this image is critical for LCP
+        <div className="p-4 flex justify-center items-center bg-background">
+          <img
+            src={promoImageUrl}
+            alt="Special Promotion"
+            className="max-w-full max-h-[70vh] object-contain rounded-md"
             key={promoImageUrl} // Add key to force re-render if URL changes
           />
         </div>
