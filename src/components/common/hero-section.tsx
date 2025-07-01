@@ -21,35 +21,27 @@ export function HeroSection() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Set initial values from localStorage on mount
-    const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY);
-    const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY);
-    const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY);
-
-    setImageUrl(storedImageUrl || DEFAULT_BANNER_IMAGE_URL);
-    setTitle(storedTitle || DEFAULT_BANNER_TITLE);
-    setSubtitle(storedSubtitle || DEFAULT_BANNER_SUBTITLE);
     setIsClient(true);
 
-    // Listen for changes from other tabs
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === BANNER_IMAGE_URL_STORAGE_KEY && event.newValue) {
-        setImageUrl(event.newValue);
-      }
-      if (event.key === BANNER_TITLE_STORAGE_KEY && event.newValue) {
-        setTitle(event.newValue);
-      }
-      if (event.key === BANNER_SUBTITLE_STORAGE_KEY && event.newValue) {
-        setSubtitle(event.newValue);
-      }
+    const checkStorage = () => {
+      const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY) || DEFAULT_BANNER_IMAGE_URL;
+      const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY) || DEFAULT_BANNER_TITLE;
+      const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY) || DEFAULT_BANNER_SUBTITLE;
+
+      // Only update state if the value has actually changed to prevent unnecessary re-renders
+      setImageUrl(currentUrl => currentUrl !== storedImageUrl ? storedImageUrl : currentUrl);
+      setTitle(currentTitle => currentTitle !== storedTitle ? storedTitle : currentTitle);
+      setSubtitle(currentSubtitle => currentSubtitle !== storedSubtitle ? storedSubtitle : currentSubtitle);
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Cleanup the listener when the component unmounts
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    // Initial check on mount
+    checkStorage();
+
+    // Poll every second for changes. This is a robust way to ensure cross-tab updates.
+    const intervalId = setInterval(checkStorage, 1000);
+
+    // Cleanup the interval when the component unmounts to prevent memory leaks
+    return () => clearInterval(intervalId);
   }, []);
 
   if (!isClient) {

@@ -28,27 +28,23 @@ export function PromoPopup() {
     }
   }, []);
 
-  // Effect to manage the promo image URL and listen for live updates
+  // Effect to manage the promo image URL and listen for live updates via polling
   useEffect(() => {
     if(!isClient) return;
 
-    // Load initial image from localStorage
-    const storedImageUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
-    setPromoImageUrl(storedImageUrl || DEFAULT_PROMO_IMAGE_URL);
-
-    // Listen for live updates from other tabs
-    const handleStorageChange = (event: StorageEvent) => {
-        if (event.key === PROMO_IMAGE_STORAGE_KEY && event.newValue) {
-            setPromoImageUrl(event.newValue);
-        }
+    const checkStorage = () => {
+        const storedUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY) || DEFAULT_PROMO_IMAGE_URL;
+        setPromoImageUrl(currentUrl => currentUrl !== storedUrl ? storedUrl : currentUrl);
     };
-    
-    window.addEventListener('storage', handleStorageChange);
 
-    // Cleanup listener
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    // Initial check on mount
+    checkStorage();
+
+    // Poll every second for changes.
+    const intervalId = setInterval(checkStorage, 1000);
+
+    // Cleanup the interval when the component unmounts
+    return () => clearInterval(intervalId);
   }, [isClient]);
 
   if (!isClient || !isOpen || !promoImageUrl) {
