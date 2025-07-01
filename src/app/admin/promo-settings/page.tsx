@@ -7,11 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Label } from '@/components/ui/label';
 import { ImageUp, Save } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { DEFAULT_PROMO_IMAGE_URL } from '@/lib/mock-data';
+import { DEFAULT_PROMO_IMAGE_URL, PROMO_IMAGE_STORAGE_KEY } from '@/lib/mock-data';
 import { ImageUploader } from '@/components/admin/image-uploader';
-import { getChannel } from '@/lib/channel';
-
-const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
 
 export default function PromoSettingsPage() {
   const [promoImageUrl, setPromoImageUrl] = useState('');
@@ -44,16 +41,6 @@ export default function PromoSettingsPage() {
     try {
       localStorage.setItem(PROMO_IMAGE_STORAGE_KEY, promoImageUrl);
       
-      const channel = getChannel();
-      if (channel) {
-        channel.postMessage({
-          type: 'UPDATE_PROMO',
-          payload: {
-            imageUrl: promoImageUrl,
-          },
-        });
-      }
-
       toast({
         title: "Promo Image Updated",
         description: "The promotional popup image has been saved.",

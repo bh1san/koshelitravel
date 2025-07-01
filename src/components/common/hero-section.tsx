@@ -13,7 +13,6 @@ import {
   BANNER_TITLE_STORAGE_KEY,
   BANNER_SUBTITLE_STORAGE_KEY
 } from '@/lib/mock-data';
-import { getChannel } from '@/lib/channel';
 
 export function HeroSection() {
   const [imageUrl, setImageUrl] = useState('');
@@ -22,7 +21,7 @@ export function HeroSection() {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This runs once on component mount in the browser
+    // Set initial values from localStorage on mount
     const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY);
     const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY);
     const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY);
@@ -32,26 +31,24 @@ export function HeroSection() {
     setSubtitle(storedSubtitle || DEFAULT_BANNER_SUBTITLE);
     setIsClient(true);
 
-    // This listens for live updates from other tabs (e.g., the admin panel)
-    const channel = getChannel();
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data && event.data.type === 'UPDATE_BANNER') {
-        const { imageUrl, title, subtitle } = event.data.payload;
-        if (imageUrl) setImageUrl(imageUrl);
-        if (title) setTitle(title);
-        if (subtitle) setSubtitle(subtitle);
+    // Listen for changes from other tabs
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === BANNER_IMAGE_URL_STORAGE_KEY && event.newValue) {
+        setImageUrl(event.newValue);
+      }
+      if (event.key === BANNER_TITLE_STORAGE_KEY && event.newValue) {
+        setTitle(event.newValue);
+      }
+      if (event.key === BANNER_SUBTITLE_STORAGE_KEY && event.newValue) {
+        setSubtitle(event.newValue);
       }
     };
 
-    if (channel) {
-      channel.addEventListener('message', handleMessage);
-    }
+    window.addEventListener('storage', handleStorageChange);
     
     // Cleanup the listener when the component unmounts
     return () => {
-      if (channel) {
-        channel.removeEventListener('message', handleMessage);
-      }
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
@@ -70,7 +67,7 @@ export function HeroSection() {
 
   return (
     <section
-      key={imageUrl} // Using key forces a re-mount on image change, ensuring smooth transitions
+      key={imageUrl} // Using key forces a re-render on image change
       className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500"
       style={{ backgroundImage: `url('${imageUrl}')` }}
     >

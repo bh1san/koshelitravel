@@ -5,10 +5,8 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
-import { DEFAULT_PROMO_IMAGE_URL } from '@/lib/mock-data';
-import { getChannel } from '@/lib/channel';
+import { DEFAULT_PROMO_IMAGE_URL, PROMO_IMAGE_STORAGE_KEY } from '@/lib/mock-data';
 
-const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
 const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 
 export function PromoPopup() {
@@ -16,6 +14,7 @@ export function PromoPopup() {
   const [promoImageUrl, setPromoImageUrl] = useState('');
   const [isClient, setIsClient] = useState(false);
 
+  // Effect to control popup visibility (show once per session)
   useEffect(() => {
     setIsClient(true);
     const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
@@ -29,6 +28,7 @@ export function PromoPopup() {
     }
   }, []);
 
+  // Effect to manage the promo image URL and listen for live updates
   useEffect(() => {
     if(!isClient) return;
 
@@ -36,24 +36,18 @@ export function PromoPopup() {
     const storedImageUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
     setPromoImageUrl(storedImageUrl || DEFAULT_PROMO_IMAGE_URL);
 
-    // Listen for live updates
-    const channel = getChannel();
-    const handleMessage = (event: MessageEvent) => {
-        if (event.data && event.data.type === 'UPDATE_PROMO') {
-            const { imageUrl } = event.data.payload;
-            if (imageUrl) setPromoImageUrl(imageUrl);
+    // Listen for live updates from other tabs
+    const handleStorageChange = (event: StorageEvent) => {
+        if (event.key === PROMO_IMAGE_STORAGE_KEY && event.newValue) {
+            setPromoImageUrl(event.newValue);
         }
     };
     
-    if (channel) {
-        channel.addEventListener('message', handleMessage);
-    }
+    window.addEventListener('storage', handleStorageChange);
 
     // Cleanup listener
     return () => {
-      if (channel) {
-        channel.removeEventListener('message', handleMessage);
-      }
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [isClient]);
 
@@ -75,7 +69,7 @@ export function PromoPopup() {
             src={promoImageUrl}
             alt="Special Promotion"
             className="max-w-full max-h-[70vh] object-contain rounded-md"
-            key={promoImageUrl}
+            key={promoImageUrl} // Force re-render on URL change
           />
         </div>
       </DialogContent>

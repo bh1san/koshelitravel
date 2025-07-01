@@ -18,7 +18,6 @@ import {
   BANNER_SUBTITLE_STORAGE_KEY
 } from '@/lib/mock-data';
 import { ImageUploader } from '@/components/admin/image-uploader';
-import { getChannel } from '@/lib/channel';
 
 export default function BannerSettingsPage() {
   const [bannerImageUrl, setBannerImageUrl] = useState('');
@@ -60,18 +59,6 @@ export default function BannerSettingsPage() {
       localStorage.setItem(BANNER_TITLE_STORAGE_KEY, bannerTitle);
       localStorage.setItem(BANNER_SUBTITLE_STORAGE_KEY, bannerSubtitle);
       
-      const channel = getChannel();
-      if (channel) {
-        channel.postMessage({
-          type: 'UPDATE_BANNER',
-          payload: {
-            imageUrl: bannerImageUrl,
-            title: bannerTitle,
-            subtitle: bannerSubtitle,
-          },
-        });
-      }
-
       toast({
         title: "Banner Settings Updated",
         description: "The hero banner image and text have been saved.",
