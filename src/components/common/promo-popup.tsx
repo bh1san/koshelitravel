@@ -13,16 +13,23 @@ const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [promoImageUrl, setPromoImageUrl] = useState(DEFAULT_PROMO_IMAGE_URL);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This effect runs only on the client
+    setIsClient(true);
     const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
     
-    // Only show the popup if the user hasn't seen it in this session
     if (!hasSeenPopup) {
-      setIsOpen(true);
-      sessionStorage.setItem(POPUP_SEEN_SESSION_KEY, 'true');
+      const timer = setTimeout(() => {
+        setIsOpen(true);
+        sessionStorage.setItem(POPUP_SEEN_SESSION_KEY, 'true');
+      }, 2000); // 2-second delay
+      return () => clearTimeout(timer); // Cleanup timer
     }
+  }, []);
+
+  useEffect(() => {
+    if(!isClient) return;
 
     const storedImageUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
     if (storedImageUrl) {
@@ -36,14 +43,12 @@ export function PromoPopup() {
     };
 
     window.addEventListener('storage', handleStorageChange);
-
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []); // Empty dependency array ensures this runs once on mount
+  }, [isClient]);
 
-  // Don't render the Dialog if it's not supposed to be open
-  if (!isOpen) {
+  if (!isClient || !isOpen) {
     return null;
   }
 
@@ -61,7 +66,7 @@ export function PromoPopup() {
             src={promoImageUrl}
             alt="Special Promotion"
             className="max-w-full max-h-[70vh] object-contain rounded-md"
-            key={promoImageUrl} // Add key to force re-render if URL changes
+            key={promoImageUrl}
           />
         </div>
       </DialogContent>

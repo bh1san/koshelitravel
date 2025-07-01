@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   DEFAULT_BANNER_IMAGE_URL, 
   DEFAULT_BANNER_TITLE, 
@@ -14,19 +15,20 @@ import {
 } from '@/lib/mock-data';
 
 export function HeroSection() {
-  const [imageUrl, setImageUrl] = useState(DEFAULT_BANNER_IMAGE_URL);
-  const [title, setTitle] = useState(DEFAULT_BANNER_TITLE);
-  const [subtitle, setSubtitle] = useState(DEFAULT_BANNER_SUBTITLE);
+  const [imageUrl, setImageUrl] = useState('');
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This effect runs on the client to get the latest values
     const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY);
     const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY);
     const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY);
 
-    if (storedImageUrl) setImageUrl(storedImageUrl);
-    if (storedTitle) setTitle(storedTitle);
-    if (storedSubtitle) setSubtitle(storedSubtitle);
+    setImageUrl(storedImageUrl || DEFAULT_BANNER_IMAGE_URL);
+    setTitle(storedTitle || DEFAULT_BANNER_TITLE);
+    setSubtitle(storedSubtitle || DEFAULT_BANNER_SUBTITLE);
+    setIsClient(true);
 
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === BANNER_IMAGE_URL_STORAGE_KEY && event.newValue) {
@@ -46,13 +48,25 @@ export function HeroSection() {
     };
   }, []);
 
+  if (!isClient) {
+    return (
+      <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-muted">
+         <Skeleton className="absolute inset-0" />
+         <div className="container relative z-10 text-center">
+             <Skeleton className="h-12 w-3/4 mx-auto mb-6" />
+             <Skeleton className="h-6 w-1/2 mx-auto" />
+         </div>
+      </section>
+    );
+  }
+
   return (
     <section
-      key={imageUrl} // Add key to force re-render if URL changes
-      className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center"
+      key={imageUrl}
+      className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500"
       style={{ backgroundImage: `url('${imageUrl}')` }}
     >
-      <div className="absolute inset-0 bg-black/60 z-0"></div> {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black/60 z-0"></div>
       <div className="container relative z-10 text-center animate-fadeIn">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-6 text-white shadow-text">
           {title}
