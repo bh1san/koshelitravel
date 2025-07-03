@@ -5,20 +5,38 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { ImageUp, Save } from 'lucide-react';
+import { ImageUp, Save, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { DEFAULT_PROMO_IMAGE_URL, PROMO_IMAGE_STORAGE_KEY } from '@/lib/mock-data';
 import { ImageUploader } from '@/components/admin/image-uploader';
 
 export default function PromoSettingsPage() {
   const [promoImageUrl, setPromoImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    const storedUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
-    setPromoImageUrl(storedUrl || DEFAULT_PROMO_IMAGE_URL);
-  }, []);
+    async function fetchPromoSettings() {
+      try {
+        const response = await fetch('/api/settings/promo');
+        if (!response.ok) {
+          throw new Error('Failed to fetch settings');
+        }
+        const data = await response.json();
+        setPromoImageUrl(data.imageUrl || '');
+      } catch (error) {
+        console.error("Failed to fetch promo settings:", error);
+        toast({
+          title: "Error",
+          description: "Could not load promo settings.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsFetching(false);
+      }
+    }
+    fetchPromoSettings();
+  }, [toast]);
 
   const handleImageUploadComplete = (url: string) => {
     setPromoImageUrl(url);
@@ -28,19 +46,17 @@ export default function PromoSettingsPage() {
     event.preventDefault();
     setIsLoading(true);
 
-    if (!promoImageUrl.trim()) {
-        toast({
-            title: "Error",
-            description: "Promo image URL cannot be empty.",
-            variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-    }
-
     try {
-      localStorage.setItem(PROMO_IMAGE_STORAGE_KEY, promoImageUrl);
-      
+      const response = await fetch('/api/settings/promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl: promoImageUrl }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save settings');
+      }
+
       toast({
         title: "Promo Image Updated",
         description: "The promotional popup image has been saved.",
@@ -49,20 +65,24 @@ export default function PromoSettingsPage() {
       console.error("Failed to save promo image URL:", error);
       toast({
         title: "Error",
-        description: "Could not save the promo image URL. Please ensure your browser supports localStorage.",
+        description: "Could not save the promo image URL. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
+  
+  if (isFetching) {
+    return <div className="text-center p-10">Loading settings...</div>;
+  }
 
   return (
     <div className="space-y-6">
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><ImageUp /> Promotional Popup Settings</CardTitle>
-          <CardDescription>Update the image displayed in the site-wide promotional popup. The new image will appear live for users.</CardDescription>
+          <CardDescription>Update the image displayed in the site-wide promotional popup.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -80,7 +100,7 @@ export default function PromoSettingsPage() {
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {isLoading ? 'Saving...' : <><Save className="mr-2 h-4 w-4" /> Save Image</>}
+              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Image</>}
             </Button>
           </CardFooter>
         </form>

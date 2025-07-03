@@ -7,16 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { GalleryHorizontalEnd, Save } from 'lucide-react';
+import { GalleryHorizontalEnd, Save, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { 
-  DEFAULT_BANNER_IMAGE_URL, 
-  DEFAULT_BANNER_TITLE, 
-  DEFAULT_BANNER_SUBTITLE,
-  BANNER_IMAGE_URL_STORAGE_KEY,
-  BANNER_TITLE_STORAGE_KEY,
-  BANNER_SUBTITLE_STORAGE_KEY
-} from '@/lib/mock-data';
 import { ImageUploader } from '@/components/admin/image-uploader';
 
 export default function BannerSettingsPage() {
@@ -24,17 +16,33 @@ export default function BannerSettingsPage() {
   const [bannerTitle, setBannerTitle] = useState('');
   const [bannerSubtitle, setBannerSubtitle] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY);
-    const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY);
-    const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY);
-
-    setBannerImageUrl(storedImageUrl || DEFAULT_BANNER_IMAGE_URL);
-    setBannerTitle(storedTitle || DEFAULT_BANNER_TITLE);
-    setBannerSubtitle(storedSubtitle || DEFAULT_BANNER_SUBTITLE);
-  }, []);
+    async function fetchBannerSettings() {
+      try {
+        const response = await fetch('/api/settings/banner');
+        if (!response.ok) {
+          throw new Error('Failed to fetch settings');
+        }
+        const data = await response.json();
+        setBannerImageUrl(data.imageUrl || '');
+        setBannerTitle(data.title || '');
+        setBannerSubtitle(data.subtitle || '');
+      } catch (error) {
+        console.error("Failed to fetch banner settings:", error);
+        toast({
+          title: "Error",
+          description: "Could not load banner settings.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsFetching(false);
+      }
+    }
+    fetchBannerSettings();
+  }, [toast]);
 
   const handleImageUploadComplete = (url: string) => {
     setBannerImageUrl(url);
@@ -44,43 +52,47 @@ export default function BannerSettingsPage() {
     event.preventDefault();
     setIsLoading(true);
 
-    if (!bannerImageUrl.trim() || !bannerTitle.trim() || !bannerSubtitle.trim()) {
-        toast({
-            title: "Error",
-            description: "All banner fields are required.",
-            variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-    }
-
     try {
-      localStorage.setItem(BANNER_IMAGE_URL_STORAGE_KEY, bannerImageUrl);
-      localStorage.setItem(BANNER_TITLE_STORAGE_KEY, bannerTitle);
-      localStorage.setItem(BANNER_SUBTITLE_STORAGE_KEY, bannerSubtitle);
-      
+      const response = await fetch('/api/settings/banner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageUrl: bannerImageUrl,
+          title: bannerTitle,
+          subtitle: bannerSubtitle,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save settings');
+      }
+
       toast({
         title: "Banner Settings Updated",
-        description: "The hero banner image and text have been saved.",
+        description: "The hero banner has been successfully saved.",
       });
     } catch (error) {
       console.error("Failed to save banner settings:", error);
       toast({
         title: "Error",
-        description: "Could not save banner settings. Please ensure your browser supports localStorage.",
+        description: "Could not save banner settings. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
+
+  if (isFetching) {
+    return <div className="text-center p-10">Loading settings...</div>;
+  }
 
   return (
     <div className="space-y-6">
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><GalleryHorizontalEnd /> Hero Banner Settings</CardTitle>
-          <CardDescription>Update the image, title, and subtitle for the main hero banner on your homepage. Changes will appear live.</CardDescription>
+          <CardDescription>Update the image, title, and subtitle for the main hero banner on your homepage.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -120,7 +132,7 @@ export default function BannerSettingsPage() {
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {isLoading ? 'Saving...' : <><Save className="mr-2 h-4 w-4" /> Save Banner Settings</>}
+              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Banner Settings</>}
             </Button>
           </CardFooter>
         </form>

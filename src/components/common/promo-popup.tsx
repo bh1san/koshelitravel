@@ -5,45 +5,47 @@ import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
-import { DEFAULT_PROMO_IMAGE_URL, PROMO_IMAGE_STORAGE_KEY } from '@/lib/mock-data';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 
+interface PromoData {
+  imageUrl: string;
+}
+
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const [promoImageUrl, setPromoImageUrl] = useState<string | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
+  const [data, setData] = useState<PromoData | null>(null);
 
   useEffect(() => {
-    // This effect runs only on the client, after the component has mounted.
-    setIsMounted(true);
-
     const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
     if (!hasSeenPopup) {
       const timer = setTimeout(() => {
         setIsOpen(true);
         sessionStorage.setItem(POPUP_SEEN_SESSION_KEY, 'true');
-      }, 2000); // 2-second delay
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, []);
 
   useEffect(() => {
-    if (!isMounted) return;
-
-    const checkStorage = () => {
-      const storedUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY) || DEFAULT_PROMO_IMAGE_URL;
-      if (storedUrl !== promoImageUrl) {
-        setPromoImageUrl(storedUrl);
+    async function fetchPromoData() {
+      try {
+        // Add cache-busting query parameter
+        const response = await fetch(`/api/settings/promo?t=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Failed to fetch promo data');
+        const promoData = await response.json();
+        setData(promoData);
+      } catch (error) {
+        console.error("Failed to fetch promo data:", error);
+        setData(null);
       }
-    };
-
-    checkStorage();
-    const intervalId = setInterval(checkStorage, 1000);
-    return () => clearInterval(intervalId);
-
-  }, [isMounted, promoImageUrl]);
+    }
+    
+    if (isOpen) {
+      fetchPromoData();
+    }
+  }, [isOpen]);
 
   if (!isOpen) {
     return null;
@@ -59,14 +61,14 @@ export function PromoPopup() {
           </Button>
         </DialogHeader>
         <div className="p-4 flex justify-center items-center bg-background">
-          {!promoImageUrl ? (
+          {!data?.imageUrl ? (
             <Skeleton className="w-full h-64" />
           ) : (
             <img
-              src={promoImageUrl}
+              src={data.imageUrl}
               alt="Special Promotion"
               className="max-w-full max-h-[70vh] object-contain rounded-md"
-              key={promoImageUrl}
+              key={data.imageUrl}
             />
           )}
         </div>
