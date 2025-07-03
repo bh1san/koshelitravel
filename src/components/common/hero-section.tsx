@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,43 +15,59 @@ import {
 } from '@/lib/mock-data';
 
 export function HeroSection() {
-  const [imageUrl, setImageUrl] = useState('');
-  const [title, setTitle] = useState('');
-  const [subtitle, setSubtitle] = useState('');
-  const [isClient, setIsClient] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [title, setTitle] = useState<string | null>(null);
+  const [subtitle, setSubtitle] = useState<string | null>(null);
 
-  useEffect(() => {
-    setIsClient(true);
-
-    const checkStorage = () => {
-      const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY) || DEFAULT_BANNER_IMAGE_URL;
-      const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY) || DEFAULT_BANNER_TITLE;
-      const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY) || DEFAULT_BANNER_SUBTITLE;
-
-      // Only update state if the value has actually changed to prevent unnecessary re-renders
-      setImageUrl(currentUrl => currentUrl !== storedImageUrl ? storedImageUrl : currentUrl);
-      setTitle(currentTitle => currentTitle !== storedTitle ? storedTitle : currentTitle);
-      setSubtitle(currentSubtitle => currentSubtitle !== storedSubtitle ? storedSubtitle : currentSubtitle);
-    };
-
-    // Initial check on mount
-    checkStorage();
-
-    // Poll every second for changes. This is a robust way to ensure cross-tab updates.
-    const intervalId = setInterval(checkStorage, 1000);
-
-    // Cleanup the interval when the component unmounts to prevent memory leaks
-    return () => clearInterval(intervalId);
+  // This function will be reused to load data from localStorage
+  const loadDataFromStorage = useCallback(() => {
+    const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY);
+    const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY);
+    const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY);
+    
+    setImageUrl(storedImageUrl || DEFAULT_BANNER_IMAGE_URL);
+    setTitle(storedTitle || DEFAULT_BANNER_TITLE);
+    setSubtitle(storedSubtitle || DEFAULT_BANNER_SUBTITLE);
   }, []);
 
-  if (!isClient) {
-    // Show a skeleton loader on the server and initial client render
+  useEffect(() => {
+    // Load initial data on client mount
+    loadDataFromStorage();
+
+    // Define the event handler for cross-tab updates
+    const handleStorageChange = (event: StorageEvent) => {
+      if (
+        event.key === BANNER_IMAGE_URL_STORAGE_KEY ||
+        event.key === BANNER_TITLE_STORAGE_KEY ||
+        event.key === BANNER_SUBTITLE_STORAGE_KEY
+      ) {
+        // When storage changes in another tab, reload the data
+        loadDataFromStorage();
+      }
+    };
+
+    // Add event listener for the 'storage' event
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup: remove event listener when component unmounts
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [loadDataFromStorage]);
+
+  // While loading on the client for the first time, show a skeleton.
+  // This prevents hydration errors and provides a better loading experience.
+  if (imageUrl === null || title === null || subtitle === null) {
     return (
       <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-muted">
          <Skeleton className="absolute inset-0" />
          <div className="container relative z-10 text-center">
              <Skeleton className="h-12 w-3/4 mx-auto mb-6" />
              <Skeleton className="h-6 w-1/2 mx-auto" />
+             <div className="mt-8 flex justify-center gap-4">
+                <Skeleton className="h-12 w-40" />
+                <Skeleton className="h-12 w-40" />
+             </div>
          </div>
       </section>
     );
@@ -59,12 +75,12 @@ export function HeroSection() {
 
   return (
     <section
-      key={imageUrl} // Using key forces a re-render on image change
-      className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500"
+      key={imageUrl} // Using a key forces a re-render on image change, helping with background updates
+      className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500 animate-fadeIn"
       style={{ backgroundImage: `url('${imageUrl}')` }}
     >
       <div className="absolute inset-0 bg-black/60 z-0"></div>
-      <div className="container relative z-10 text-center animate-fadeIn">
+      <div className="container relative z-10 text-center">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-6 text-white shadow-text">
           {title}
         </h1>

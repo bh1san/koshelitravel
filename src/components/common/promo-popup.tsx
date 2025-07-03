@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
@@ -11,14 +11,17 @@ const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
-  const [promoImageUrl, setPromoImageUrl] = useState('');
-  const [isClient, setIsClient] = useState(false);
+  const [promoImageUrl, setPromoImageUrl] = useState<string | null>(null);
+
+  // Memoized function to load the image URL from localStorage
+  const loadDataFromStorage = useCallback(() => {
+    const storedUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
+    setPromoImageUrl(storedUrl || DEFAULT_PROMO_IMAGE_URL);
+  }, []);
 
   // Effect to control popup visibility (show once per session)
   useEffect(() => {
-    setIsClient(true);
     const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
-    
     if (!hasSeenPopup) {
       const timer = setTimeout(() => {
         setIsOpen(true);
@@ -28,32 +31,35 @@ export function PromoPopup() {
     }
   }, []);
 
-  // Effect to manage the promo image URL and listen for live updates via polling
+  // Effect to load the image URL and listen for cross-tab updates
   useEffect(() => {
-    if(!isClient) return;
+    // Initial data load on mount
+    loadDataFromStorage();
 
-    const checkStorage = () => {
-        const storedUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY) || DEFAULT_PROMO_IMAGE_URL;
-        setPromoImageUrl(currentUrl => currentUrl !== storedUrl ? storedUrl : currentUrl);
+    // Listen for changes from other tabs
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === PROMO_IMAGE_STORAGE_KEY) {
+        loadDataFromStorage();
+      }
     };
 
-    // Initial check on mount
-    checkStorage();
+    window.addEventListener('storage', handleStorageChange);
 
-    // Poll every second for changes.
-    const intervalId = setInterval(checkStorage, 1000);
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [loadDataFromStorage]);
 
-    // Cleanup the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, [isClient]);
 
-  if (!isClient || !isOpen || !promoImageUrl) {
+  // Do not render the dialog until it's ready to be shown and the image URL is loaded
+  if (!isOpen || !promoImageUrl) {
     return null;
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="p-0 max-w-md sm:max-w-lg md:max-w-xl overflow-hidden shadow-xl rounded-lg">
+      <DialogContent className="p-0 max-w-md sm:max-w-lg md:max-w-xl overflow-hidden shadow-xl rounded-lg animate-fadeIn">
         <DialogHeader className="p-3 flex flex-row items-center justify-between border-b bg-muted/40">
           <DialogTitle className="text-base font-semibold text-primary">Special Promotion!</DialogTitle>
           <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} aria-label="Close popup" className="h-7 w-7">
