@@ -22,7 +22,7 @@ export default function BannerSettingsPage() {
   useEffect(() => {
     async function fetchBannerSettings() {
       try {
-        const response = await fetch('/api/settings/banner');
+        const response = await fetch(`/api/settings/banner?t=${new Date().getTime()}`);
         if (!response.ok) {
           throw new Error('Failed to fetch settings');
         }

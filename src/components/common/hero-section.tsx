@@ -30,7 +30,8 @@ export function HeroSection() {
         setData(bannerData);
       } catch (error) {
         console.error("Failed to fetch banner data:", error);
-        setData(null);
+        // Set to empty strings to avoid showing stale data on error
+        setData({ imageUrl: '', title: 'Error Loading Banner', subtitle: 'Could not load banner content.' });
       }
     }
     

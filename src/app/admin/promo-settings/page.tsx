@@ -18,7 +18,7 @@ export default function PromoSettingsPage() {
   useEffect(() => {
     async function fetchPromoSettings() {
       try {
-        const response = await fetch('/api/settings/promo');
+        const response = await fetch(`/api/settings/promo?t=${new Date().getTime()}`);
         if (!response.ok) {
           throw new Error('Failed to fetch settings');
         }

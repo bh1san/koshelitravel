@@ -18,17 +18,21 @@ export function PromoPopup() {
   const [data, setData] = useState<PromoData | null>(null);
 
   useEffect(() => {
-    const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
-    if (!hasSeenPopup) {
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-        sessionStorage.setItem(POPUP_SEEN_SESSION_KEY, 'true');
-      }, 2000);
-      return () => clearTimeout(timer);
+    // This effect runs once to determine if the popup should be shown
+    if (typeof window !== 'undefined') {
+      const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
+      if (!hasSeenPopup) {
+        const timer = setTimeout(() => {
+          setIsOpen(true);
+          sessionStorage.setItem(POPUP_SEEN_SESSION_KEY, 'true');
+        }, 2000);
+        return () => clearTimeout(timer);
+      }
     }
   }, []);
 
   useEffect(() => {
+    // This effect runs only when the popup is opened to fetch data
     async function fetchPromoData() {
       try {
         // Add cache-busting query parameter
@@ -68,7 +72,7 @@ export function PromoPopup() {
               src={data.imageUrl}
               alt="Special Promotion"
               className="max-w-full max-h-[70vh] object-contain rounded-md"
-              key={data.imageUrl}
+              key={data.imageUrl} // Use key to force re-render on URL change
             />
           )}
         </div>
