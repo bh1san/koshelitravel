@@ -1,15 +1,20 @@
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { DEFAULT_BANNER_IMAGE_URL, DEFAULT_BANNER_TITLE, DEFAULT_BANNER_SUBTITLE } from '@/lib/mock-data';
 
 const settingsFilePath = path.join(process.cwd(), 'src', 'lib', 'settings-store.json');
 
 async function getSettings() {
   try {
+    // Check if file exists before reading
+    await fs.access(settingsFilePath);
     const fileContent = await fs.readFile(settingsFilePath, 'utf-8');
-    return JSON.parse(fileContent);
+    // If file is empty, return default structure
+    return fileContent ? JSON.parse(fileContent) : { banner: {}, promo: {} };
   } catch (error) {
-    console.error("Error reading settings file:", error);
+    // If file doesn't exist or other read error, return default structure
+    console.warn("Could not read settings file, will use defaults. Error:", error);
     return { banner: {}, promo: {} };
   }
 }
@@ -26,9 +31,20 @@ async function writeSettings(data: any) {
 export async function GET() {
   try {
     const settings = await getSettings();
-    return NextResponse.json(settings.banner);
+    const bannerData = {
+      imageUrl: settings.banner?.imageUrl || DEFAULT_BANNER_IMAGE_URL,
+      title: settings.banner?.title || DEFAULT_BANNER_TITLE,
+      subtitle: settings.banner?.subtitle || DEFAULT_BANNER_SUBTITLE,
+    };
+    return NextResponse.json(bannerData);
   } catch (error) {
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    console.error("GET /api/settings/banner Error:", error);
+    const defaultBannerData = {
+      imageUrl: DEFAULT_BANNER_IMAGE_URL,
+      title: DEFAULT_BANNER_TITLE,
+      subtitle: DEFAULT_BANNER_SUBTITLE,
+    };
+    return NextResponse.json(defaultBannerData, { status: 500 });
   }
 }
 
@@ -46,6 +62,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: 'Banner settings updated successfully' });
   } catch (error) {
+    console.error("POST /api/settings/banner Error:", error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

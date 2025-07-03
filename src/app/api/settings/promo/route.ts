@@ -1,15 +1,20 @@
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { DEFAULT_PROMO_IMAGE_URL } from '@/lib/mock-data';
 
 const settingsFilePath = path.join(process.cwd(), 'src', 'lib', 'settings-store.json');
 
 async function getSettings() {
   try {
+    // Check if file exists before reading
+    await fs.access(settingsFilePath);
     const fileContent = await fs.readFile(settingsFilePath, 'utf-8');
-    return JSON.parse(fileContent);
+    // If file is empty, return default structure
+    return fileContent ? JSON.parse(fileContent) : { banner: {}, promo: {} };
   } catch (error) {
-    console.error("Error reading settings file:", error);
+     // If file doesn't exist or other read error, return default structure
+    console.warn("Could not read settings file, will use defaults. Error:", error);
     return { banner: {}, promo: {} };
   }
 }
@@ -26,9 +31,16 @@ async function writeSettings(data: any) {
 export async function GET() {
   try {
     const settings = await getSettings();
-    return NextResponse.json(settings.promo);
+    const promoData = {
+      imageUrl: settings.promo?.imageUrl || DEFAULT_PROMO_IMAGE_URL,
+    };
+    return NextResponse.json(promoData);
   } catch (error) {
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    console.error("GET /api/settings/promo Error:", error);
+    const defaultPromoData = {
+      imageUrl: DEFAULT_PROMO_IMAGE_URL,
+    };
+    return NextResponse.json(defaultPromoData, { status: 500 });
   }
 }
 
@@ -46,6 +58,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: 'Promo settings updated successfully' });
   } catch (error) {
+    console.error("POST /api/settings/promo Error:", error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
