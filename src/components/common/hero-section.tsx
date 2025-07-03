@@ -1,13 +1,13 @@
 
-"use client";
+'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  DEFAULT_BANNER_IMAGE_URL, 
-  DEFAULT_BANNER_TITLE, 
+import {
+  DEFAULT_BANNER_IMAGE_URL,
+  DEFAULT_BANNER_TITLE,
   DEFAULT_BANNER_SUBTITLE,
   BANNER_IMAGE_URL_STORAGE_KEY,
   BANNER_TITLE_STORAGE_KEY,
@@ -18,46 +18,46 @@ export function HeroSection() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [title, setTitle] = useState<string | null>(null);
   const [subtitle, setSubtitle] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // This function will be reused to load data from localStorage
-  const loadDataFromStorage = useCallback(() => {
-    const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY);
-    const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY);
-    const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY);
-    
-    setImageUrl(storedImageUrl || DEFAULT_BANNER_IMAGE_URL);
-    setTitle(storedTitle || DEFAULT_BANNER_TITLE);
-    setSubtitle(storedSubtitle || DEFAULT_BANNER_SUBTITLE);
+  useEffect(() => {
+    // This effect runs only on the client, after the component has mounted.
+    setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    // Load initial data on client mount
-    loadDataFromStorage();
+    if (!isMounted) return;
 
-    // Define the event handler for cross-tab updates
-    const handleStorageChange = (event: StorageEvent) => {
-      if (
-        event.key === BANNER_IMAGE_URL_STORAGE_KEY ||
-        event.key === BANNER_TITLE_STORAGE_KEY ||
-        event.key === BANNER_SUBTITLE_STORAGE_KEY
-      ) {
-        // When storage changes in another tab, reload the data
-        loadDataFromStorage();
+    // Function to check and update state from localStorage
+    const checkStorage = () => {
+      const storedImageUrl = localStorage.getItem(BANNER_IMAGE_URL_STORAGE_KEY) || DEFAULT_BANNER_IMAGE_URL;
+      const storedTitle = localStorage.getItem(BANNER_TITLE_STORAGE_KEY) || DEFAULT_BANNER_TITLE;
+      const storedSubtitle = localStorage.getItem(BANNER_SUBTITLE_STORAGE_KEY) || DEFAULT_BANNER_SUBTITLE;
+
+      // Only update state if the value has actually changed
+      if (storedImageUrl !== imageUrl) {
+        setImageUrl(storedImageUrl);
+      }
+      if (storedTitle !== title) {
+        setTitle(storedTitle);
+      }
+      if (storedSubtitle !== subtitle) {
+        setSubtitle(storedSubtitle);
       }
     };
 
-    // Add event listener for the 'storage' event
-    window.addEventListener('storage', handleStorageChange);
+    // Initial check
+    checkStorage();
 
-    // Cleanup: remove event listener when component unmounts
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [loadDataFromStorage]);
+    // Set up polling to check for changes every second
+    const intervalId = setInterval(checkStorage, 1000);
 
-  // While loading on the client for the first time, show a skeleton.
-  // This prevents hydration errors and provides a better loading experience.
-  if (imageUrl === null || title === null || subtitle === null) {
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+
+  }, [isMounted, imageUrl, title, subtitle]);
+
+  if (!isMounted || !imageUrl || !title || !subtitle) {
     return (
       <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-muted">
          <Skeleton className="absolute inset-0" />
@@ -75,7 +75,7 @@ export function HeroSection() {
 
   return (
     <section
-      key={imageUrl} // Using a key forces a re-render on image change, helping with background updates
+      key={imageUrl} // Using a key forces a re-render on image change
       className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500 animate-fadeIn"
       style={{ backgroundImage: `url('${imageUrl}')` }}
     >

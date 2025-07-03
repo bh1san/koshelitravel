@@ -1,26 +1,24 @@
 
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { DEFAULT_PROMO_IMAGE_URL, PROMO_IMAGE_STORAGE_KEY } from '@/lib/mock-data';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 
 export function PromoPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [promoImageUrl, setPromoImageUrl] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Memoized function to load the image URL from localStorage
-  const loadDataFromStorage = useCallback(() => {
-    const storedUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY);
-    setPromoImageUrl(storedUrl || DEFAULT_PROMO_IMAGE_URL);
-  }, []);
-
-  // Effect to control popup visibility (show once per session)
   useEffect(() => {
+    // This effect runs only on the client, after the component has mounted.
+    setIsMounted(true);
+
     const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
     if (!hasSeenPopup) {
       const timer = setTimeout(() => {
@@ -31,29 +29,23 @@ export function PromoPopup() {
     }
   }, []);
 
-  // Effect to load the image URL and listen for cross-tab updates
   useEffect(() => {
-    // Initial data load on mount
-    loadDataFromStorage();
+    if (!isMounted) return;
 
-    // Listen for changes from other tabs
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === PROMO_IMAGE_STORAGE_KEY) {
-        loadDataFromStorage();
+    const checkStorage = () => {
+      const storedUrl = localStorage.getItem(PROMO_IMAGE_STORAGE_KEY) || DEFAULT_PROMO_IMAGE_URL;
+      if (storedUrl !== promoImageUrl) {
+        setPromoImageUrl(storedUrl);
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    checkStorage();
+    const intervalId = setInterval(checkStorage, 1000);
+    return () => clearInterval(intervalId);
 
-    // Cleanup the event listener when the component unmounts
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [loadDataFromStorage]);
+  }, [isMounted, promoImageUrl]);
 
-
-  // Do not render the dialog until it's ready to be shown and the image URL is loaded
-  if (!isOpen || !promoImageUrl) {
+  if (!isOpen) {
     return null;
   }
 
@@ -67,12 +59,16 @@ export function PromoPopup() {
           </Button>
         </DialogHeader>
         <div className="p-4 flex justify-center items-center bg-background">
-          <img
-            src={promoImageUrl}
-            alt="Special Promotion"
-            className="max-w-full max-h-[70vh] object-contain rounded-md"
-            key={promoImageUrl} // Force re-render on URL change
-          />
+          {!promoImageUrl ? (
+            <Skeleton className="w-full h-64" />
+          ) : (
+            <img
+              src={promoImageUrl}
+              alt="Special Promotion"
+              className="max-w-full max-h-[70vh] object-contain rounded-md"
+              key={promoImageUrl}
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>
