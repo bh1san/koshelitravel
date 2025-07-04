@@ -12,51 +12,65 @@ interface BannerData {
   subtitle: string;
 }
 
+function HeroSkeleton() {
+  return (
+    <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-muted">
+      <Skeleton className="absolute inset-0" />
+      <div className="container relative z-10 text-center">
+        <Skeleton className="h-12 w-3/4 mx-auto mb-6" />
+        <Skeleton className="h-6 w-1/2 mx-auto" />
+        <div className="mt-8 flex justify-center gap-4">
+          <Skeleton className="h-12 w-40" />
+          <Skeleton className="h-12 w-40" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function HeroSection() {
   const [data, setData] = useState<BannerData | null>(null);
-  const [isMounted, setIsMounted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsMounted(true);
-    
     async function fetchBannerData() {
       try {
-        // Add cache-busting query parameter
         const response = await fetch(`/api/settings/banner?t=${new Date().getTime()}`);
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`Failed to fetch banner data. Status: ${response.status}`);
         }
         const bannerData = await response.json();
+        if (!bannerData.imageUrl || !bannerData.title || !bannerData.subtitle) {
+          throw new Error('Received incomplete banner data from API.');
+        }
         setData(bannerData);
-      } catch (error) {
-        console.error("Failed to fetch banner data:", error);
-        // Set to empty strings to avoid showing stale data on error
-        setData({ imageUrl: '', title: 'Error Loading Banner', subtitle: 'Could not load banner content.' });
+      } catch (err: any) {
+        console.error("Failed to fetch banner data:", err);
+        setError(err.message || 'Could not load banner content.');
       }
     }
     
     fetchBannerData();
   }, []);
 
-  if (!isMounted || !data) {
+  if (error) {
     return (
-      <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-muted">
-         <Skeleton className="absolute inset-0" />
-         <div className="container relative z-10 text-center">
-             <Skeleton className="h-12 w-3/4 mx-auto mb-6" />
-             <Skeleton className="h-6 w-1/2 mx-auto" />
-             <div className="mt-8 flex justify-center gap-4">
-                <Skeleton className="h-12 w-40" />
-                <Skeleton className="h-12 w-40" />
-             </div>
+       <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-destructive/10">
+         <div className="container relative z-10 text-center text-destructive">
+             <h1 className="text-4xl font-bold">Error Loading Banner</h1>
+             <p className="mt-4">{error}</p>
          </div>
       </section>
     );
   }
 
+  if (!data) {
+    return <HeroSkeleton />;
+  }
+
   return (
     <section
-      key={data.imageUrl}
+      key={data.imageUrl} // Use key to force re-render when URL changes
       className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500 animate-fadeIn"
       style={{ backgroundImage: `url('${data.imageUrl}')` }}
     >

@@ -25,7 +25,7 @@ export function PromoPopup() {
         const timer = setTimeout(() => {
           setIsOpen(true);
           sessionStorage.setItem(POPUP_SEEN_SESSION_KEY, 'true');
-        }, 2000);
+        }, 2000); // Delay popup by 2 seconds
         return () => clearTimeout(timer);
       }
     }
@@ -34,21 +34,23 @@ export function PromoPopup() {
   useEffect(() => {
     // This effect runs only when the popup is opened to fetch data
     async function fetchPromoData() {
+      if (!isOpen) return;
       try {
-        // Add cache-busting query parameter
         const response = await fetch(`/api/settings/promo?t=${new Date().getTime()}`);
         if (!response.ok) throw new Error('Failed to fetch promo data');
         const promoData = await response.json();
+        if (!promoData.imageUrl) {
+          throw new Error('Received incomplete promo data from API.');
+        }
         setData(promoData);
       } catch (error) {
         console.error("Failed to fetch promo data:", error);
-        setData(null);
+        // Don't show the popup if data fetching fails
+        setIsOpen(false); 
       }
     }
     
-    if (isOpen) {
-      fetchPromoData();
-    }
+    fetchPromoData();
   }, [isOpen]);
 
   if (!isOpen) {
@@ -65,7 +67,7 @@ export function PromoPopup() {
           </Button>
         </DialogHeader>
         <div className="p-4 flex justify-center items-center bg-background">
-          {!data?.imageUrl ? (
+          {!data ? (
             <Skeleton className="w-full h-64" />
           ) : (
             <img

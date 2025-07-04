@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -7,13 +8,14 @@ const settingsFilePath = path.join(process.cwd(), 'src', 'lib', 'settings-store.
 
 async function getSettings() {
   try {
-    // Check if file exists before reading
     await fs.access(settingsFilePath);
     const fileContent = await fs.readFile(settingsFilePath, 'utf-8');
-    // If file is empty, return default structure
-    return fileContent ? JSON.parse(fileContent) : { banner: {}, promo: {} };
+    if (!fileContent) {
+      return { banner: {}, promo: {} };
+    }
+    return JSON.parse(fileContent);
   } catch (error) {
-     // If file doesn't exist or other read error, return default structure
+    // If file doesn't exist or is unreadable/corrupt, return default structure
     console.warn("Could not read settings file, will use defaults. Error:", error);
     return { banner: {}, promo: {} };
   }
@@ -36,11 +38,12 @@ export async function GET() {
     };
     return NextResponse.json(promoData);
   } catch (error) {
-    console.error("GET /api/settings/promo Error:", error);
+    console.error("GET /api/settings/promo Critical Error:", error);
     const defaultPromoData = {
       imageUrl: DEFAULT_PROMO_IMAGE_URL,
     };
-    return NextResponse.json(defaultPromoData, { status: 500 });
+    // Return a default response even on critical failure to prevent blank screens
+    return NextResponse.json(defaultPromoData, { status: 500, statusText: "Internal Server Error" });
   }
 }
 
