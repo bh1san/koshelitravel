@@ -64,18 +64,19 @@ export default function BannerSettingsPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save settings');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save settings');
       }
 
       toast({
         title: "Banner Settings Updated",
         description: "The hero banner has been successfully saved.",
       });
-    } catch (error) {
-      console.error("Failed to save banner settings:", error);
+    } catch (error: any) {
+      console.error("Failed to save banner settings:", error.message);
       toast({
         title: "Error",
-        description: "Could not save banner settings. Please try again.",
+        description: `Could not save banner settings: ${error.message}`,
         variant: "destructive",
       });
     } finally {

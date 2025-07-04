@@ -34,18 +34,20 @@ export function HeroSection() {
 
   useEffect(() => {
     async function fetchBannerData() {
+      console.log('[HeroSection] Fetching banner data...');
       try {
         const response = await fetch(`/api/settings/banner?t=${new Date().getTime()}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch banner data. Status: ${response.status}`);
         }
         const bannerData = await response.json();
+        console.log('[HeroSection] Fetched data:', bannerData);
         if (!bannerData.imageUrl || !bannerData.title || !bannerData.subtitle) {
           throw new Error('Received incomplete banner data from API.');
         }
         setData(bannerData);
       } catch (err: any) {
-        console.error("Failed to fetch banner data:", err);
+        console.error("[HeroSection] Failed to fetch banner data:", err);
         setError(err.message || 'Could not load banner content.');
       }
     }
@@ -70,7 +72,7 @@ export function HeroSection() {
 
   return (
     <section
-      key={data.imageUrl} // Use key to force re-render when URL changes
+      key={data.imageUrl}
       className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500 animate-fadeIn"
       style={{ backgroundImage: `url('${data.imageUrl}')` }}
     >
