@@ -1,21 +1,20 @@
 
 'use client';
+// This component now acts as a client-side wrapper for the dialog logic.
+// The actual data (imageUrl) is fetched by the parent Server Component.
 
 import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { siteSettings } from '@/lib/mock-data';
+
 
 const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 
-interface PromoData {
-  imageUrl: string;
-}
-
-export function PromoPopup() {
+function PromoPopupClient({ imageUrl }: { imageUrl: string }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [data, setData] = useState<PromoData | null>(null);
 
   useEffect(() => {
     // This effect runs once to determine if the popup should be shown
@@ -31,28 +30,6 @@ export function PromoPopup() {
     }
   }, []);
 
-  useEffect(() => {
-    // This effect runs only when the popup is opened to fetch data
-    async function fetchPromoData() {
-      if (!isOpen) return;
-      try {
-        const response = await fetch(`/api/settings/promo?t=${new Date().getTime()}`);
-        if (!response.ok) throw new Error('Failed to fetch promo data');
-        const promoData = await response.json();
-        if (!promoData.imageUrl) {
-          throw new Error('Received incomplete promo data from API.');
-        }
-        setData(promoData);
-      } catch (error) {
-        console.error("Failed to fetch promo data:", error);
-        // Don't show the popup if data fetching fails
-        setIsOpen(false); 
-      }
-    }
-    
-    fetchPromoData();
-  }, [isOpen]);
-
   if (!isOpen) {
     return null;
   }
@@ -67,18 +44,25 @@ export function PromoPopup() {
           </Button>
         </DialogHeader>
         <div className="p-4 flex justify-center items-center bg-background">
-          {!data ? (
+          {!imageUrl ? (
             <Skeleton className="w-full h-64" />
           ) : (
             <img
-              src={data.imageUrl}
+              src={imageUrl}
               alt="Special Promotion"
               className="max-w-full max-h-[70vh] object-contain rounded-md"
-              key={data.imageUrl} // Use key to force re-render on URL change
+              key={imageUrl}
             />
           )}
         </div>
       </DialogContent>
     </Dialog>
   );
+}
+
+
+// This is the new main export, a Server Component that fetches data.
+export function PromoPopup() {
+  const data = siteSettings.promo;
+  return <PromoPopupClient imageUrl={data.imageUrl} />;
 }

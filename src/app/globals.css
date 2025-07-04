@@ -112,3 +112,7 @@ body {
 .animate-slideInUp {
   animation: slideInUp 0.5s ease-out;
 }
+
+.shadow-text {
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}

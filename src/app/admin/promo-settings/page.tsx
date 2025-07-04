@@ -1,29 +1,29 @@
 
 'use client';
 
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { ImageUp, Save, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from '@/components/admin/image-uploader';
+import { getSiteSettings, updatePromoSettings } from '@/app/actions/settingsActions';
 
 export default function PromoSettingsPage() {
   const [promoImageUrl, setPromoImageUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter();
+
 
   useEffect(() => {
     async function fetchPromoSettings() {
       try {
-        const response = await fetch(`/api/settings/promo?t=${new Date().getTime()}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch settings');
-        }
-        const data = await response.json();
-        setPromoImageUrl(data.imageUrl || '');
+        const data = await getSiteSettings();
+        setPromoImageUrl(data.promo.imageUrl || '');
       } catch (error) {
         console.error("Failed to fetch promo settings:", error);
         toast({
@@ -44,34 +44,31 @@ export default function PromoSettingsPage() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setIsLoading(true);
+    startTransition(async () => {
+      try {
+        const result = await updatePromoSettings({ imageUrl: promoImageUrl });
+        if (!result.success) {
+            throw new Error(result.message || 'Failed to save settings');
+        }
 
-    try {
-      const response = await fetch('/api/settings/promo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: promoImageUrl }),
-      });
+        toast({
+          title: "Promo Image Updated",
+          description: "The promotional popup image has been saved.",
+        });
+        router.refresh();
 
-      if (!response.ok) {
-        throw new Error('Failed to save settings');
+      } catch (error: any) {
+        console.error("Failed to save promo image URL:", error);
+        toast({
+          title: "Error",
+          description: `Could not save the promo image: ${error.message}`,
+          variant: "destructive",
+        });
       }
-
-      toast({
-        title: "Promo Image Updated",
-        description: "The promotional popup image has been saved.",
-      });
-    } catch (error) {
-      console.error("Failed to save promo image URL:", error);
-      toast({
-        title: "Error",
-        description: "Could not save the promo image URL. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
+  
+  const isLoading = isPending || isFetching;
   
   if (isFetching) {
     return <div className="text-center p-10">Loading settings...</div>;

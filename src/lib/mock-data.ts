@@ -52,15 +52,18 @@ export interface VisaOption {
 }
 
 
-export const DEFAULT_PROMO_IMAGE_URL = 'https://placehold.co/1080x1080.png';
-export const PROMO_IMAGE_STORAGE_KEY = 'kosheliTravelPromoImage';
-
-export const DEFAULT_BANNER_IMAGE_URL = 'https://placehold.co/1920x1080.png';
-export const DEFAULT_BANNER_TITLE = 'Your Next Adventure Awaits';
-export const DEFAULT_BANNER_SUBTITLE = 'Discover breathtaking destinations and create unforgettable memories with KosheliTravel. Personalized plans, expert advice, and exclusive deals.';
-export const BANNER_IMAGE_URL_STORAGE_KEY = 'kosheliTravelBannerImageUrl';
-export const BANNER_TITLE_STORAGE_KEY = 'kosheliTravelBannerTitle';
-export const BANNER_SUBTITLE_STORAGE_KEY = 'kosheliTravelBannerSubtitle';
+// This object will be mutated by server actions to simulate a database.
+// It acts as the single source of truth for site-wide settings.
+export let siteSettings = {
+  banner: {
+    imageUrl: 'https://placehold.co/1920x1080.png',
+    title: 'Your Next Adventure Awaits',
+    subtitle: 'Discover breathtaking destinations and create unforgettable memories with KosheliTravel. Personalized plans, expert advice, and exclusive deals.',
+  },
+  promo: {
+    imageUrl: 'https://placehold.co/1080x1080.png',
+  }
+};
 
 
 export const mockTravelPackages: TravelPackage[] = [

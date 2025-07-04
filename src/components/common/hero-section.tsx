@@ -1,78 +1,17 @@
 
-'use client';
-
-import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
+import { siteSettings } from '@/lib/mock-data';
 
-interface BannerData {
-  imageUrl: string;
-  title: string;
-  subtitle: string;
-}
-
-function HeroSkeleton() {
-  return (
-    <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-muted">
-      <Skeleton className="absolute inset-0" />
-      <div className="container relative z-10 text-center">
-        <Skeleton className="h-12 w-3/4 mx-auto mb-6" />
-        <Skeleton className="h-6 w-1/2 mx-auto" />
-        <div className="mt-8 flex justify-center gap-4">
-          <Skeleton className="h-12 w-40" />
-          <Skeleton className="h-12 w-40" />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function HeroSection() {
-  const [data, setData] = useState<BannerData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchBannerData() {
-      console.log('[HeroSection] Fetching banner data...');
-      try {
-        const response = await fetch(`/api/settings/banner?t=${new Date().getTime()}`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch banner data. Status: ${response.status}`);
-        }
-        const bannerData = await response.json();
-        console.log('[HeroSection] Fetched data:', bannerData);
-        if (!bannerData.imageUrl || !bannerData.title || !bannerData.subtitle) {
-          throw new Error('Received incomplete banner data from API.');
-        }
-        setData(bannerData);
-      } catch (err: any) {
-        console.error("[HeroSection] Failed to fetch banner data:", err);
-        setError(err.message || 'Could not load banner content.');
-      }
-    }
-    
-    fetchBannerData();
-  }, []);
-
-  if (error) {
-    return (
-       <section className="relative py-20 md:py-32 min-h-[60vh] flex items-center bg-destructive/10">
-         <div className="container relative z-10 text-center text-destructive">
-             <h1 className="text-4xl font-bold">Error Loading Banner</h1>
-             <p className="mt-4">{error}</p>
-         </div>
-      </section>
-    );
-  }
-
-  if (!data) {
-    return <HeroSkeleton />;
-  }
+// This is now a Server Component. It fetches data on the server and renders.
+// No client-side hooks are needed for data fetching, making it more robust.
+export async function HeroSection() {
+  // Directly get the latest data from our in-memory "database" on the server.
+  const data = siteSettings.banner;
 
   return (
     <section
-      key={data.imageUrl}
+      key={data.imageUrl} // Use key to force re-render on data change
       className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500 animate-fadeIn"
       style={{ backgroundImage: `url('${data.imageUrl}')` }}
     >
@@ -93,11 +32,6 @@ export function HeroSection() {
           </Button>
         </div>
       </div>
-      <style jsx global>{`
-        .shadow-text {
-          text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-      `}</style>
     </section>
   );
 }
