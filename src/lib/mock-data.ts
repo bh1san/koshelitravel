@@ -52,9 +52,9 @@ export interface VisaOption {
 }
 
 
-// This object will be mutated by server actions to simulate a database.
-// It acts as the single source of truth for site-wide settings.
-export let siteSettings = {
+// This object now serves as the default, initial configuration.
+// The live settings are managed in `settings-store.json`.
+export const defaultSiteSettings = {
   banner: {
     imageUrl: 'https://placehold.co/1920x1080.png',
     title: 'Your Next Adventure Awaits',

@@ -21,7 +21,9 @@ export default function PromoSettingsPage() {
 
   useEffect(() => {
     async function fetchPromoSettings() {
+      setIsFetching(true);
       try {
+        // Fetch the latest settings from the persistent store via the server action
         const data = await getSiteSettings();
         setPromoImageUrl(data.promo.imageUrl || '');
       } catch (error) {

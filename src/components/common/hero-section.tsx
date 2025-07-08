@@ -1,17 +1,18 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { siteSettings } from '@/lib/mock-data';
+import { getSiteSettings } from '@/app/actions/settingsActions';
 
-// This is now a Server Component. It fetches data on the server and renders.
-// No client-side hooks are needed for data fetching, making it more robust.
+// This is now a robust Server Component.
+// It fetches the latest data from the persistent store on the server.
 export async function HeroSection() {
-  // Directly get the latest data from our in-memory "database" on the server.
-  const data = siteSettings.banner;
+  // Directly get the latest data from our server-side store.
+  const settings = await getSiteSettings();
+  const data = settings.banner;
 
   return (
     <section
-      key={data.imageUrl} // Use key to force re-render on data change
+      key={data.imageUrl} // Use key to force re-render when the URL changes
       className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500 animate-fadeIn"
       style={{ backgroundImage: `url('${data.imageUrl}')` }}
     >

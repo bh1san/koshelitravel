@@ -1,8 +1,8 @@
 
 'use server';
 
-import { siteSettings } from '@/lib/mock-data';
 import { revalidatePath } from 'next/cache';
+import { readSettings, writeSettings } from '@/lib/settings-store';
 
 interface BannerSettings {
     imageUrl: string;
@@ -14,31 +14,44 @@ interface PromoSettings {
     imageUrl: string;
 }
 
-// Action to get the current settings
+// Action to get the current settings from the persistent store
 export async function getSiteSettings() {
-    // Directly return the current, in-memory settings object.
-    // This simulates reading from a database.
-    return Promise.resolve(siteSettings);
+    return readSettings();
 }
 
-// Action to update banner settings
+// Action to update banner settings in the persistent store
 export async function updateBannerSettings(data: BannerSettings) {
     console.log("Server Action: Updating banner settings with:", data);
-    
-    // In a real app, you'd save this to a database.
-    // Here, we mutate the in-memory object.
-    siteSettings.banner = data;
-    
-    // Invalidate the cache for the homepage to ensure the change is reflected.
-    revalidatePath('/');
-    
-    return { success: true, message: "Banner settings updated successfully." };
+    try {
+        const currentSettings = await readSettings();
+        currentSettings.banner = data;
+        await writeSettings(currentSettings);
+
+        // Invalidate the cache for the homepage to ensure the change is reflected.
+        revalidatePath('/');
+        revalidatePath('/admin/banner-settings');
+        
+        return { success: true, message: "Banner settings updated successfully." };
+    } catch (error: any) {
+        console.error("Error updating banner settings:", error);
+        return { success: false, message: error.message || "An unexpected error occurred." };
+    }
 }
 
-// Action to update promo settings
+// Action to update promo settings in the persistent store
 export async function updatePromoSettings(data: PromoSettings) {
     console.log("Server Action: Updating promo settings with:", data);
-    siteSettings.promo = data;
-    revalidatePath('/');
-    return { success: true, message: "Promo settings updated successfully." };
+    try {
+        const currentSettings = await readSettings();
+        currentSettings.promo = data;
+        await writeSettings(currentSettings);
+
+        revalidatePath('/');
+        revalidatePath('/admin/promo-settings');
+
+        return { success: true, message: "Promo settings updated successfully." };
+    } catch (error: any) {
+        console.error("Error updating promo settings:", error);
+        return { success: false, message: error.message || "An unexpected error occurred." };
+    }
 }

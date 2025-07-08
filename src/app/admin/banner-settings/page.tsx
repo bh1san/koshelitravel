@@ -24,7 +24,9 @@ export default function BannerSettingsPage() {
 
   useEffect(() => {
     async function fetchBannerSettings() {
+      setIsFetching(true);
       try {
+        // Fetch the latest settings from the persistent store via the server action
         const data = await getSiteSettings();
         setBannerImageUrl(data.banner.imageUrl || '');
         setBannerTitle(data.banner.title || '');
@@ -66,7 +68,7 @@ export default function BannerSettingsPage() {
           title: "Banner Settings Updated",
           description: "The hero banner has been successfully saved.",
         });
-        // Refresh the page to ensure server components elsewhere re-render
+        // router.refresh() is still useful to ensure other server components get fresh data if needed
         router.refresh(); 
 
       } catch (error: any) {

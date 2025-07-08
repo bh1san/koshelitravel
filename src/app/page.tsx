@@ -10,7 +10,8 @@ import { ContactSection } from '@/components/contact/contact-section';
 import { OurTeamSection } from '@/components/common/our-team-section';
 import { PromoPopup } from '@/components/common/promo-popup';
 
-export default function Home() {
+// The page is now an async component, allowing top-level awaits for data fetching.
+export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
