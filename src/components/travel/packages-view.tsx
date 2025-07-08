@@ -6,6 +6,7 @@ import type { TravelPackage } from '@/lib/mock-data';
 import { PackageCard } from './package-card';
 import { SearchBar, type SearchCriteria } from './search-bar';
 import { format } from 'date-fns';
+import { AdsenseUnit } from '@/components/common/adsense-unit';
 
 interface PackagesViewProps {
   initialPackages: TravelPackage[];
@@ -35,6 +36,13 @@ export function PackagesView({ initialPackages }: PackagesViewProps) {
   return (
     <div>
       <SearchBar onSearch={handleSearch} />
+      
+      <div className="my-8">
+        <AdsenseUnit
+          adClient={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}
+          adSlot={process.env.NEXT_PUBLIC_ADSENSE_AD_SLOT_ID}
+        />
+      </div>
 
       {filteredPackages.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-10">
