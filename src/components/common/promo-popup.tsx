@@ -43,7 +43,7 @@ export function PromoPopup({ imageUrl }: { imageUrl: string | null }) {
           <img
             src={imageUrl}
             alt="Special Promotion"
-            className="max-w-full max-h-[70vh] object-contain rounded-md"
+            className="w-full h-auto max-h-[70vh] object-contain rounded-md"
             key={imageUrl} // Force re-render if URL changes
           />
         </div>

@@ -17,7 +17,7 @@ const resizeConfig: ResizeConfig = {
   packages: { width: 800, height: 600, fit: 'cover' },
   blogs: { width: 800, height: 400, fit: 'cover' },
   team: { width: 300, height: 300, fit: 'cover' },
-  promo: { width: 1080, height: 1080, fit: 'inside' },
+  promo: { width: 800, height: 800, fit: 'inside' },
   general: { width: 1024, height: 1024, fit: 'inside' },
 };
 
