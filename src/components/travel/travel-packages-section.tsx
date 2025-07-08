@@ -1,12 +1,17 @@
+
 "use client";
 
 import { useState, useMemo } from 'react';
-import { mockTravelPackages, type TravelPackage } from '@/lib/mock-data';
+import type { TravelPackage } from '@/lib/mock-data';
 import { PackageCard } from './package-card';
 import { SearchBar, type SearchCriteria } from './search-bar';
 import { format } from 'date-fns';
 
-export function TravelPackagesSection() {
+interface TravelPackagesSectionProps {
+  initialPackages: TravelPackage[];
+}
+
+export function TravelPackagesSection({ initialPackages }: TravelPackagesSectionProps) {
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
     destination: '',
     date: undefined,
@@ -18,13 +23,13 @@ export function TravelPackagesSection() {
   };
 
   const filteredPackages = useMemo(() => {
-    return mockTravelPackages.filter((pkg) => {
+    return initialPackages.filter((pkg) => {
       const destinationMatch = pkg.destination.toLowerCase().includes(searchCriteria.destination.toLowerCase());
       const dateMatch = searchCriteria.date ? format(searchCriteria.date, "yyyy-MM-dd") === pkg.date : true;
       const budgetMatch = searchCriteria.budget && searchCriteria.budget !== 'all' ? pkg.budgetCategory === searchCriteria.budget : true;
       return destinationMatch && dateMatch && budgetMatch;
     });
-  }, [searchCriteria]);
+  }, [searchCriteria, initialPackages]);
 
   return (
     <section id="packages" className="py-12 md:py-16 bg-background">

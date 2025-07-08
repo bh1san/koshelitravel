@@ -4,15 +4,15 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { mockTravelPackages, type TravelPackage } from '@/lib/mock-data';
+import type { TravelPackage } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, Edit as EditIcon } from 'lucide-react';
+import { ArrowLeft, Save, Edit as EditIcon, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { ImageUploader } from '@/components/admin/image-uploader';
+import { getPackageById, updatePackage } from '@/app/actions/packageActions';
 
 export default function EditPackagePage() {
   const router = useRouter();
@@ -21,69 +21,87 @@ export default function EditPackagePage() {
   const { toast } = useToast();
 
   const [pkg, setPkg] = useState<TravelPackage | null>(null);
-  const [title, setTitle] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [imageAiHint, setImageAiHint] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      const foundPackage = mockTravelPackages.find(p => p.id === id);
-      if (foundPackage) {
-        setPkg(foundPackage);
-        setTitle(foundPackage.title);
-        setPrice(foundPackage.price);
-        setDescription(foundPackage.description);
-        setImageUrl(foundPackage.image);
-        setImageAiHint(foundPackage.dataAiHint || '');
+    if (typeof id !== 'string') return;
+
+    const fetchPackage = async () => {
+      setIsLoading(true);
+      try {
+        const foundPackage = await getPackageById(id);
+        if (foundPackage) {
+          setPkg(foundPackage);
+        } else {
+          toast({
+            title: "Error",
+            description: "Package not found.",
+            variant: "destructive",
+          });
+          setPkg(null);
+        }
+      } catch (error) {
+         toast({
+            title: "Error",
+            description: "Failed to load package data.",
+            variant: "destructive",
+          });
+      } finally {
+        setIsLoading(false);
       }
-    }
-  }, [id]);
+    };
+
+    fetchPackage();
+  }, [id, toast]);
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (!pkg) return;
+    const { id, value } = e.target;
+    setPkg({ ...pkg, [id]: value });
+  };
+
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setIsLoading(true);
-
-    // Simulate API call
-    console.log('Updating package:', { id, title, price, description, image: imageUrl, dataAiHint: imageAiHint });
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // In a real app, you would update the data source here.
-    // For mock data, this change won't persist beyond this simulation.
-    const packageIndex = mockTravelPackages.findIndex(p => p.id === id);
-    if (packageIndex !== -1) {
-        mockTravelPackages[packageIndex] = {
-            ...mockTravelPackages[packageIndex],
-            title,
-            price,
-            description,
-            image: imageUrl,
-            dataAiHint: imageAiHint,
-        };
-    }
+    if (!pkg) return;
     
-    setIsLoading(false);
-    toast({
-      title: "Package Updated",
-      description: `Package "${title}" has been successfully updated (simulated).`,
-    });
-    router.push('/admin/packages');
+    setIsSaving(true);
+
+    try {
+        const result = await updatePackage(pkg);
+        if (result.success) {
+            toast({
+              title: "Package Updated",
+              description: `Package "${pkg.title}" has been successfully updated.`,
+            });
+            router.push('/admin/packages');
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error: any) {
+        toast({
+            title: "Error",
+            description: error.message || "Failed to save the package.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsSaving(false);
+    }
   };
 
-  if (!pkg && !id) {
-    return <p>Loading package data...</p>;
+  if (isLoading) {
+    return <div className="text-center p-10">Loading package data...</div>;
   }
   
-  if (!pkg && id) {
+  if (!pkg) {
      return (
         <Card className="max-w-2xl mx-auto">
             <CardHeader>
                 <CardTitle>Package Not Found</CardTitle>
             </CardHeader>
             <CardContent>
-                <p>The travel package with ID "{id}" could not be found.</p>
+                <p>The travel package with ID "{id}" could not be found or loaded.</p>
             </CardContent>
             <CardFooter>
                  <Button variant="outline" asChild>
@@ -103,62 +121,66 @@ export default function EditPackagePage() {
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><EditIcon /> Edit Travel Package</CardTitle>
-          <CardDescription>Modify the details for "{pkg?.title}".</CardDescription>
+          <CardDescription>Modify the details for "{pkg.title}".</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="title">Title</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+              <Input id="title" value={pkg.title} onChange={handleInputChange} required />
             </div>
             <div>
               <Label htmlFor="price">Price (e.g., $1200)</Label>
-              <Input id="price" value={price} onChange={(e) => setPrice(e.target.value)} required />
+              <Input id="price" value={pkg.price} onChange={handleInputChange} required />
             </div>
             <div>
               <Label htmlFor="description">Description (Activities, Details)</Label>
               <Textarea 
                 id="description" 
-                value={description} 
-                onChange={(e) => setDescription(e.target.value)} 
+                value={pkg.description} 
+                onChange={handleInputChange} 
                 rows={6} 
                 required 
               />
             </div>
             <div>
-              <Label>Package Image</Label>
-               <ImageUploader 
-                onUploadComplete={setImageUrl}
-                currentImageUrl={imageUrl}
-                folder="packages"
-              />
-            </div>
-            <div className="text-sm text-muted-foreground text-center">OR</div>
-            <div>
-              <Label htmlFor="imageUrl">Or Paste Image URL</Label>
+              <Label htmlFor="image">Image URL</Label>
               <Input
-                id="imageUrl"
+                id="image"
                 type="text"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
+                value={pkg.image}
+                onChange={handleInputChange}
                 placeholder="https://example.com/image.png"
+                required
               />
-              <p className="text-xs text-muted-foreground mt-1">Pasting a URL here will override the uploaded image. The preview above will update.</p>
+               {pkg.image && (
+                <div className="mt-4">
+                    <Label>Image Preview:</Label>
+                    <div className="mt-2 border rounded-md p-2 flex justify-center items-center bg-muted/20 max-h-64 overflow-hidden">
+                        <img 
+                            key={pkg.image}
+                            src={pkg.image} 
+                            alt="Current image preview" 
+                            className="max-w-full max-h-56 object-contain rounded" 
+                        />
+                    </div>
+                </div>
+            )}
             </div>
             <div>
-              <Label htmlFor="imageAiHint">Image AI Hint</Label>
+              <Label htmlFor="dataAiHint">Image AI Hint</Label>
               <Input 
-                id="imageAiHint" 
-                value={imageAiHint} 
-                onChange={(e) => setImageAiHint(e.target.value)} 
+                id="dataAiHint" 
+                value={pkg.dataAiHint || ''} 
+                onChange={handleInputChange} 
                 placeholder="e.g., paris eiffel tower night"
               />
               <p className="text-xs text-muted-foreground mt-1">Keywords to help describe the image (max 2 words).</p>
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {isLoading ? 'Saving...' : <><Save className="mr-2 h-4 w-4" /> Save Changes</>}
+            <Button type="submit" disabled={isSaving} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              {isSaving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Changes</>}
             </Button>
           </CardFooter>
         </form>

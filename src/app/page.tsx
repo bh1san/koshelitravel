@@ -10,17 +10,19 @@ import { ContactSection } from '@/components/contact/contact-section';
 import { OurTeamSection } from '@/components/common/our-team-section';
 import { PromoPopup } from '@/components/common/promo-popup';
 import { readSettings } from '@/lib/settings-store';
+import { readPackages } from '@/lib/package-store';
 
 // The page is the single source of truth for fetching settings.
 export default async function Home() {
   const settings = await readSettings();
+  const travelPackages = await readPackages();
   
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow">
         <HeroSection banner={settings.banner} />
-        <TravelPackagesSection />
+        <TravelPackagesSection initialPackages={travelPackages} />
         <AiRecommendationsSection />
         <OurTeamSection />
         <LatestBlogsSection />
