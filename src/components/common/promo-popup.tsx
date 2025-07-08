@@ -8,13 +8,17 @@ import { X } from 'lucide-react';
 
 const POPUP_SEEN_SESSION_KEY = 'kosheliTravelPopupSeen';
 
-// This is now a pure client component that receives the image URL as a prop.
-export function PromoPopup({ imageUrl }: { imageUrl: string | null }) {
+interface PromoPopupProps {
+  imageUrl: string | null;
+  enabled: boolean;
+}
+
+export function PromoPopup({ imageUrl, enabled }: PromoPopupProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     // This effect runs once on the client to determine if the popup should be shown
-    if (typeof window !== 'undefined' && imageUrl) {
+    if (enabled && typeof window !== 'undefined' && imageUrl) {
       const hasSeenPopup = sessionStorage.getItem(POPUP_SEEN_SESSION_KEY);
       if (!hasSeenPopup) {
         const timer = setTimeout(() => {
@@ -24,9 +28,9 @@ export function PromoPopup({ imageUrl }: { imageUrl: string | null }) {
         return () => clearTimeout(timer);
       }
     }
-  }, [imageUrl]);
+  }, [imageUrl, enabled]);
 
-  if (!isOpen || !imageUrl) {
+  if (!isOpen || !imageUrl || !enabled) {
     return null;
   }
 
