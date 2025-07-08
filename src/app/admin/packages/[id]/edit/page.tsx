@@ -133,6 +133,18 @@ export default function EditPackagePage() {
                 folder="packages"
               />
             </div>
+            <div className="text-sm text-muted-foreground text-center">OR</div>
+            <div>
+              <Label htmlFor="imageUrl">Or Paste Image URL</Label>
+              <Input
+                id="imageUrl"
+                type="text"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                placeholder="https://example.com/image.png"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Pasting a URL here will override the uploaded image. The preview above will update.</p>
+            </div>
             <div>
               <Label htmlFor="imageAiHint">Image AI Hint</Label>
               <Input 

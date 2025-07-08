@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { ImageUp, Save, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from '@/components/admin/image-uploader';
@@ -94,6 +95,20 @@ export default function PromoSettingsPage() {
               />
               <p className="text-xs text-muted-foreground mt-2">
                 Upload an image for the site-wide promotional popup.
+              </p>
+            </div>
+            <div className="text-sm text-muted-foreground text-center">OR</div>
+            <div>
+              <Label htmlFor="promoImageUrl">Or Paste Image URL</Label>
+              <Input
+                id="promoImageUrl"
+                type="text"
+                value={promoImageUrl}
+                onChange={(e) => setPromoImageUrl(e.target.value)}
+                placeholder="https://example.com/image.png"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Pasting a URL here will override the uploaded image. The preview above will update.
               </p>
             </div>
           </CardContent>

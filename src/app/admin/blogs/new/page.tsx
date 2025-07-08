@@ -109,6 +109,18 @@ export default function NewBlogPostPage() {
                 folder="blogs"
               />
             </div>
+            <div className="text-sm text-muted-foreground text-center">OR</div>
+            <div>
+              <Label htmlFor="featuredImageUrl">Or Paste Image URL</Label>
+              <Input
+                id="featuredImageUrl"
+                type="text"
+                value={featuredImage}
+                onChange={(e) => setFeaturedImage(e.target.value)}
+                placeholder="https://example.com/image.png"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Pasting a URL here will override the uploaded image. The preview above will update.</p>
+            </div>
             <div>
               <Label htmlFor="featuredImageAiHint">Featured Image AI Hint</Label>
               <Input 

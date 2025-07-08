@@ -108,6 +108,20 @@ export default function BannerSettingsPage() {
                 Upload a new image for the hero banner.
               </p>
             </div>
+            <div className="text-sm text-muted-foreground text-center">OR</div>
+            <div>
+              <Label htmlFor="bannerImageUrl">Or Paste Image URL</Label>
+              <Input
+                id="bannerImageUrl"
+                type="text"
+                value={bannerImageUrl}
+                onChange={(e) => setBannerImageUrl(e.target.value)}
+                placeholder="https://example.com/image.png"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Pasting a URL here will override the uploaded image. The preview above will update.
+              </p>
+            </div>
             <div>
               <Label htmlFor="bannerTitle">Banner Title</Label>
               <Input 
