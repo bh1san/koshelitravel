@@ -3,24 +3,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import type { TravelPackage } from '@/lib/mock-data';
 import { MapPin, CalendarDays, DollarSign, Tag } from 'lucide-react';
-
-interface PackageCardProps {
-  packageInfo: TravelPackage;
-}
+import Image from 'next/image';
 
 export function PackageCard({ packageInfo }: PackageCardProps) {
   return (
     <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 rounded-lg animate-fadeIn">
       <CardHeader className="p-0 relative">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={packageInfo.image}
           alt={packageInfo.title}
           width={600}
           height={400}
           className="object-cover w-full h-48 md:h-56"
           data-ai-hint={packageInfo.dataAiHint || 'travel landscape'}
-          loading="lazy"
         />
       </CardHeader>
       <CardContent className="p-4 flex-grow">
