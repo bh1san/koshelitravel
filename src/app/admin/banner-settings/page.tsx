@@ -1,8 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, type FormEvent, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,26 +10,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { GalleryHorizontalEnd, Save, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from '@/components/admin/image-uploader';
-import { getSiteSettings, updateBannerSettings } from '@/app/actions/settingsActions';
 
 export default function BannerSettingsPage() {
   const [bannerImageUrl, setBannerImageUrl] = useState('');
   const [bannerTitle, setBannerTitle] = useState('');
   const [bannerSubtitle, setBannerSubtitle] = useState('');
-  const [isFetching, setIsFetching] = useState(true);
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const router = useRouter();
 
   useEffect(() => {
     async function fetchBannerSettings() {
-      setIsFetching(true);
+      setIsLoading(true);
       try {
-        // Fetch the latest settings from the persistent store via the server action
-        const data = await getSiteSettings();
-        setBannerImageUrl(data.banner.imageUrl || '');
-        setBannerTitle(data.banner.title || '');
-        setBannerSubtitle(data.banner.subtitle || '');
+        const response = await fetch('/api/settings/banner');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setBannerImageUrl(data.imageUrl || '');
+        setBannerTitle(data.title || '');
+        setBannerSubtitle(data.subtitle || '');
       } catch (error) {
         console.error("Failed to fetch banner settings:", error);
         toast({
@@ -39,7 +38,7 @@ export default function BannerSettingsPage() {
           variant: "destructive",
         });
       } finally {
-        setIsFetching(false);
+        setIsLoading(false);
       }
     }
     fetchBannerSettings();
@@ -51,40 +50,42 @@ export default function BannerSettingsPage() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     
-    startTransition(async () => {
-      try {
-        const result = await updateBannerSettings({
+    try {
+      const response = await fetch('/api/settings/banner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           imageUrl: bannerImageUrl,
           title: bannerTitle,
           subtitle: bannerSubtitle,
-        });
+        }),
+      });
 
-        if (!result.success) {
-          throw new Error(result.message || 'Failed to save settings');
-        }
-
-        toast({
-          title: "Banner Settings Updated",
-          description: "The hero banner has been successfully saved.",
-        });
-        // router.refresh() is still useful to ensure other server components get fresh data if needed
-        router.refresh(); 
-
-      } catch (error: any) {
-        console.error("Failed to save banner settings:", error.message);
-        toast({
-          title: "Error",
-          description: `Could not save banner settings: ${error.message}`,
-          variant: "destructive",
-        });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || 'Failed to save settings');
       }
-    });
+
+      toast({
+        title: "Banner Settings Updated",
+        description: "The hero banner has been successfully saved.",
+      });
+
+    } catch (error: any) {
+      console.error("Failed to save banner settings:", error.message);
+      toast({
+        title: "Error",
+        description: `Could not save banner settings: ${error.message}`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const isLoading = isPending || isFetching;
-
-  if (isFetching) {
+  if (isLoading && !bannerTitle) { // Show loading indicator only on initial load
     return <div className="text-center p-10">Loading settings...</div>;
   }
 
