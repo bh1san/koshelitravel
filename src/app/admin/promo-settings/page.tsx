@@ -9,9 +9,11 @@ import { Input } from '@/components/ui/input';
 import { ImageUp, Save, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from '@/components/admin/image-uploader';
+import { Switch } from '@/components/ui/switch';
 
 export default function PromoSettingsPage() {
   const [promoImageUrl, setPromoImageUrl] = useState('');
+  const [promoEnabled, setPromoEnabled] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
@@ -25,6 +27,7 @@ export default function PromoSettingsPage() {
         }
         const data = await response.json();
         setPromoImageUrl(data.imageUrl || '');
+        setPromoEnabled(data.enabled ?? true); // Default to true if not set
       } catch (error) {
         console.error("Failed to fetch promo settings:", error);
         toast({
@@ -50,7 +53,7 @@ export default function PromoSettingsPage() {
       const response = await fetch('/api/settings/promo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: promoImageUrl }),
+        body: JSON.stringify({ imageUrl: promoImageUrl, enabled: promoEnabled }),
       });
 
       const result = await response.json();
@@ -59,15 +62,15 @@ export default function PromoSettingsPage() {
       }
 
       toast({
-        title: "Promo Image Updated",
-        description: "The promotional popup image has been saved.",
+        title: "Promo Settings Updated",
+        description: "The promotional popup settings have been saved.",
       });
 
     } catch (error: any) {
-      console.error("Failed to save promo image URL:", error);
+      console.error("Failed to save promo settings:", error);
       toast({
         title: "Error",
-        description: `Could not save the promo image: ${error.message}`,
+        description: `Could not save the promo settings: ${error.message}`,
         variant: "destructive",
       });
     } finally {
@@ -84,10 +87,16 @@ export default function PromoSettingsPage() {
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><ImageUp /> Promotional Popup Settings</CardTitle>
-          <CardDescription>Update the image displayed in the site-wide promotional popup.</CardDescription>
+          <CardDescription>Update the image and enable or disable the site-wide promotional popup.</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
+             <div className="flex items-center space-x-2 p-4 border rounded-md">
+                <Switch id="promo-enabled" checked={promoEnabled} onCheckedChange={setPromoEnabled} />
+                <Label htmlFor="promo-enabled" className="text-base cursor-pointer">
+                    {promoEnabled ? 'Promotional Popup is Enabled' : 'Promotional Popup is Disabled'}
+                </Label>
+            </div>
             <div>
               <Label>Promotional Image</Label>
                <ImageUploader 
@@ -116,7 +125,7 @@ export default function PromoSettingsPage() {
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Image</>}
+              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Settings</>}
             </Button>
           </CardFooter>
         </form>

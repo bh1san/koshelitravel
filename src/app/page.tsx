@@ -28,7 +28,7 @@ export default async function Home() {
         <ContactSection />
       </main>
       <Footer />
-      <PromoPopup imageUrl={settings.promo?.imageUrl || null} />
+      {settings.promo?.enabled && <PromoPopup imageUrl={settings.promo.imageUrl || null} />}
     </div>
   );
 }

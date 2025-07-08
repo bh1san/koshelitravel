@@ -18,6 +18,7 @@ interface SiteSettings {
   };
   promo: {
     imageUrl: string;
+    enabled: boolean;
   };
 }
 

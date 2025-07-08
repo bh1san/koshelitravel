@@ -62,6 +62,7 @@ export const defaultSiteSettings = {
   },
   promo: {
     imageUrl: 'https://placehold.co/1080x1080.png',
+    enabled: true,
   }
 };
 
