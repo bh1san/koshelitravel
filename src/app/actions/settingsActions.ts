@@ -14,10 +14,8 @@ interface PromoSettings {
     imageUrl: string;
 }
 
-// Action to get the current settings from the persistent store
-export async function getSiteSettings() {
-    return readSettings();
-}
+// NOTE: getSiteSettings has been removed from this file.
+// Components now fetch data directly from `readSettings` in the settings-store.
 
 // Action to update banner settings in the persistent store
 export async function updateBannerSettings(data: BannerSettings) {
@@ -54,4 +52,9 @@ export async function updatePromoSettings(data: PromoSettings) {
         console.error("Error updating promo settings:", error);
         return { success: false, message: error.message || "An unexpected error occurred." };
     }
+}
+
+// This function is still needed for the admin pages to fetch initial data.
+export async function getSiteSettings() {
+    return readSettings();
 }

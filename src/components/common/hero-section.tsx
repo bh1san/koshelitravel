@@ -1,28 +1,29 @@
 
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { getSiteSettings } from '@/app/actions/settingsActions';
 
-// This is now a robust Server Component.
-// It fetches the latest data from the persistent store on the server.
-export async function HeroSection() {
-  // Directly get the latest data from our server-side store.
-  const settings = await getSiteSettings();
-  const data = settings.banner;
+interface BannerProps {
+  imageUrl: string;
+  title: string;
+  subtitle: string;
+}
 
+// This is now a simple, synchronous Server Component that receives data via props.
+export function HeroSection({ banner }: { banner: BannerProps }) {
+  // Use key to force re-render when the URL changes. This is important for updates.
   return (
     <section
-      key={data.imageUrl} // Use key to force re-render when the URL changes
+      key={banner.imageUrl} 
       className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[60vh] flex items-center transition-all duration-500 animate-fadeIn"
-      style={{ backgroundImage: `url('${data.imageUrl}')` }}
+      style={{ backgroundImage: `url('${banner.imageUrl}')` }}
     >
       <div className="absolute inset-0 bg-black/60 z-0"></div>
       <div className="container relative z-10 text-center">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-6 text-white shadow-text">
-          {data.title}
+          {banner.title}
         </h1>
         <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/90 shadow-text">
-          {data.subtitle}
+          {banner.subtitle}
         </p>
         <div className="space-x-4">
           <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-3 text-lg">

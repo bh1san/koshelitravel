@@ -4,6 +4,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import { defaultSiteSettings } from '@/lib/mock-data';
+import { unstable_noStore as noStore } from 'next/cache';
 
 // Define the path for our persistent settings file.
 const settingsFilePath = path.join(process.cwd(), 'settings-store.json');
@@ -23,8 +24,10 @@ interface SiteSettings {
 /**
  * Reads the settings from the JSON file.
  * If the file doesn't exist, it returns the default settings.
+ * Caching is explicitly disabled to ensure fresh data.
  */
 export async function readSettings(): Promise<SiteSettings> {
+  noStore(); // Opts this function out of all caching.
   try {
     const fileContent = await fs.readFile(settingsFilePath, 'utf-8');
     return JSON.parse(fileContent);
