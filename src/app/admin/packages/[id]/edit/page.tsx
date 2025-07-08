@@ -10,18 +10,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, Edit as EditIcon, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Save, Edit as EditIcon, Loader2, AlertTriangle, CheckCircle, Sparkles } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { getPackageById, updatePackage } from '@/app/actions/packageActions';
+import { generateImage } from '@/ai/flows/generate-image-flow';
 
-const isValidHttpUrl = (string: string) => {
-  let url;
+const isValidImageUrl = (str: string) => {
+  if (str.startsWith('data:image/')) {
+    return true;
+  }
   try {
-    url = new URL(string);
+    const url = new URL(str);
+    return url.protocol === "http:" || url.protocol === "https:";
   } catch (_) {
     return false;
   }
-  return url.protocol === "http:" || url.protocol === "https:";
 };
 
 
@@ -34,6 +37,7 @@ export default function EditPackagePage() {
   const [pkg, setPkg] = useState<TravelPackage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [imageStatus, setImageStatus] = useState<'idle' | 'valid' | 'invalid'>('idle');
 
   useEffect(() => {
@@ -45,7 +49,7 @@ export default function EditPackagePage() {
         const foundPackage = await getPackageById(id);
         if (foundPackage) {
           setPkg(foundPackage);
-          if (foundPackage.image && isValidHttpUrl(foundPackage.image)) {
+          if (foundPackage.image && isValidImageUrl(foundPackage.image)) {
             setImageStatus('idle'); // We will validate on first load inside the image tag
           }
         } else {
@@ -70,15 +74,55 @@ export default function EditPackagePage() {
     fetchPackage();
   }, [id, toast]);
   
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { id: string; value: string } }) => {
     if (!pkg) return;
     const { id, value } = e.target;
     setPkg({ ...pkg, [id]: value });
 
     if (id === 'image') {
-      setImageStatus(isValidHttpUrl(value) ? 'idle' : 'invalid');
+      if (value.startsWith('data:image/')) {
+        setImageStatus('valid');
+      } else {
+        setImageStatus(isValidImageUrl(value) ? 'idle' : 'invalid');
+      }
     }
   };
+  
+  const handleGenerateImage = async () => {
+    if (!pkg?.dataAiHint) {
+        toast({
+            title: "AI Hint Required",
+            description: "Please provide an 'Image AI Hint' to generate an image.",
+            variant: "destructive",
+        });
+        return;
+    }
+
+    setIsGeneratingImage(true);
+    try {
+        const result = await generateImage({ prompt: pkg.dataAiHint });
+        if (result.imageUrl) {
+            handleInputChange({
+                target: { id: 'image', value: result.imageUrl },
+            });
+            toast({
+                title: "Image Generated",
+                description: "New image generated and URL has been updated.",
+            });
+        } else {
+            throw new Error("The AI did not return a valid image URL.");
+        }
+    } catch (error: any) {
+        console.error("Failed to generate image:", error);
+        toast({
+            title: "Image Generation Failed",
+            description: error.message || "An unexpected error occurred.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsGeneratingImage(false);
+    }
+};
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -139,7 +183,7 @@ export default function EditPackagePage() {
      );
   }
 
-  const isUrlValidForPreview = pkg.image && isValidHttpUrl(pkg.image);
+  const isUrlValidForPreview = pkg.image && isValidImageUrl(pkg.image);
 
   return (
     <div className="space-y-6">
@@ -170,6 +214,31 @@ export default function EditPackagePage() {
                 rows={6} 
                 required 
               />
+            </div>
+            <div>
+              <Label htmlFor="dataAiHint">Image AI Hint</Label>
+              <div className="flex items-center gap-2">
+                <Input 
+                  id="dataAiHint" 
+                  value={pkg.dataAiHint || ''} 
+                  onChange={handleInputChange} 
+                  placeholder="e.g., paris eiffel tower"
+                  className="flex-grow"
+                />
+                <Button 
+                  type="button" 
+                  onClick={handleGenerateImage} 
+                  disabled={isGeneratingImage || !pkg.dataAiHint}
+                  variant="outline"
+                >
+                  {isGeneratingImage ? 
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 
+                    <Sparkles className="mr-2 h-4 w-4" />
+                  }
+                  Generate
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Provide a prompt and click generate to create an AI image.</p>
             </div>
             <div>
               <Label htmlFor="image">Image URL</Label>
@@ -210,16 +279,6 @@ export default function EditPackagePage() {
                         <span>Image preview is valid.</span>
                     </div>
                  )}
-            </div>
-            <div>
-              <Label htmlFor="dataAiHint">Image AI Hint</Label>
-              <Input 
-                id="dataAiHint" 
-                value={pkg.dataAiHint || ''} 
-                onChange={handleInputChange} 
-                placeholder="e.g., paris eiffel tower"
-              />
-              <p className="text-xs text-muted-foreground mt-1">Keywords to help describe the image (max 2 words).</p>
             </div>
           </CardContent>
           <CardFooter>
