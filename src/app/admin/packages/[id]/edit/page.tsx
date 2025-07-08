@@ -10,13 +10,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, Edit as EditIcon, Loader2, AlertTriangle, CheckCircle, Sparkles } from 'lucide-react';
+import { ArrowLeft, Save, Edit as EditIcon, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { getPackageById, updatePackage } from '@/app/actions/packageActions';
-import { generateImage } from '@/ai/flows/generate-image-flow';
+import { ImageUploader } from '@/components/admin/image-uploader';
 
 const isValidImageUrl = (str: string) => {
-  if (str.startsWith('data:image/')) {
+  if (!str) return false;
+  if (str.startsWith('data:image/') || str.startsWith('/uploads/')) {
     return true;
   }
   try {
@@ -37,7 +38,6 @@ export default function EditPackagePage() {
   const [pkg, setPkg] = useState<TravelPackage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [imageStatus, setImageStatus] = useState<'idle' | 'valid' | 'invalid'>('idle');
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function EditPackagePage() {
     setPkg({ ...pkg, [id]: value });
 
     if (id === 'image') {
-      if (value.startsWith('data:image/')) {
+      if (value.startsWith('data:image/') || value.startsWith('/uploads/')) {
         setImageStatus('valid');
       } else {
         setImageStatus(isValidImageUrl(value) ? 'idle' : 'invalid');
@@ -88,41 +88,13 @@ export default function EditPackagePage() {
     }
   };
   
-  const handleGenerateImage = async () => {
-    if (!pkg?.dataAiHint) {
-        toast({
-            title: "AI Hint Required",
-            description: "Please provide an 'Image AI Hint' to generate an image.",
-            variant: "destructive",
-        });
-        return;
-    }
-
-    setIsGeneratingImage(true);
-    try {
-        const result = await generateImage({ prompt: pkg.dataAiHint });
-        if (result.imageUrl) {
-            handleInputChange({
-                target: { id: 'image', value: result.imageUrl },
-            });
-            toast({
-                title: "Image Generated",
-                description: "New image generated and URL has been updated.",
-            });
-        } else {
-            throw new Error("The AI did not return a valid image URL.");
-        }
-    } catch (error: any) {
-        console.error("Failed to generate image:", error);
-        toast({
-            title: "Image Generation Failed",
-            description: error.message || "An unexpected error occurred.",
-            variant: "destructive",
-        });
-    } finally {
-        setIsGeneratingImage(false);
-    }
-};
+  const handleImageUploadComplete = (url: string) => {
+    handleInputChange({ target: { id: 'image', value: url } });
+    toast({
+      title: "Image Uploaded",
+      description: "Image URL has been updated. Remember to save your changes.",
+    });
+  };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -215,33 +187,20 @@ export default function EditPackagePage() {
                 required 
               />
             </div>
-            <div>
-              <Label htmlFor="dataAiHint">Image AI Hint</Label>
-              <div className="flex items-center gap-2">
-                <Input 
-                  id="dataAiHint" 
-                  value={pkg.dataAiHint || ''} 
-                  onChange={handleInputChange} 
-                  placeholder="e.g., paris eiffel tower"
-                  className="flex-grow"
-                />
-                <Button 
-                  type="button" 
-                  onClick={handleGenerateImage} 
-                  disabled={isGeneratingImage || !pkg.dataAiHint}
-                  variant="outline"
-                >
-                  {isGeneratingImage ? 
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 
-                    <Sparkles className="mr-2 h-4 w-4" />
-                  }
-                  Generate
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">Provide a prompt and click generate to create an AI image.</p>
+             <div>
+              <Label>Package Image</Label>
+              <ImageUploader 
+                onUploadComplete={handleImageUploadComplete}
+                currentImageUrl={pkg.image}
+                folder="packages"
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                Upload a new image for the package. This will generate a new URL.
+              </p>
             </div>
+            <div className="text-sm text-muted-foreground text-center">OR</div>
             <div>
-              <Label htmlFor="image">Image URL</Label>
+              <Label htmlFor="image">Or Paste Image URL</Label>
               <Input
                 id="image"
                 type="text"
@@ -250,6 +209,19 @@ export default function EditPackagePage() {
                 placeholder="https://example.com/image.png"
                 required
               />
+               <p className="text-xs text-muted-foreground mt-1">
+                Pasting a URL here will override the uploaded image. The preview below will update.
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="dataAiHint">Image Description Hint</Label>
+              <Input 
+                id="dataAiHint" 
+                value={pkg.dataAiHint || ''} 
+                onChange={handleInputChange} 
+                placeholder="e.g., paris eiffel tower"
+              />
+              <p className="text-xs text-muted-foreground mt-1">A few words describing the image for accessibility and search (e.g., "paris eiffel tower").</p>
             </div>
             <div>
                 <Label>Image Preview</Label>
@@ -264,7 +236,7 @@ export default function EditPackagePage() {
                             onError={() => setImageStatus('invalid')}
                         />
                     ) : (
-                       <p className="text-sm text-muted-foreground">Enter a valid URL to see a preview.</p>
+                       <p className="text-sm text-muted-foreground">Enter a valid URL or upload an image to see a preview.</p>
                     )}
                 </div>
                  {imageStatus === 'invalid' && pkg.image && (
