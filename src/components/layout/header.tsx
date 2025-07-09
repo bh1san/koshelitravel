@@ -1,9 +1,7 @@
-
 import Link from 'next/link';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Menu, Ticket } from 'lucide-react';
+import { Menu, Plane, Ticket } from 'lucide-react';
 
 const navLinks = [
   { href: '#packages', label: 'Packages' },
@@ -19,15 +17,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
-        <Link href="/" className="flex items-center" aria-label="KosheliTravel Home">
-          <Image
-            src="/logo.png"
-            alt="KosheliTravel Logo"
-            width={180}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
+        <Link href="/" className="flex items-center gap-2" aria-label="KosheliTravel Home">
+          <Plane className="h-7 w-7 text-primary" />
+          <span className="font-headline text-xl font-bold text-primary">KosheliTravel</span>
         </Link>
         
         <nav className="hidden md:flex gap-x-5 lg:gap-x-6 items-center">
@@ -57,14 +49,9 @@ export function Header() {
             <SheetContent side="right" className="w-[280px] sm:w-[320px]">
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <nav className="flex flex-col gap-6 pt-8">
-              <Link href="/" className="flex items-center mb-4" aria-label="KosheliTravel Home">
-                <Image
-                  src="/logo.png"
-                  alt="KosheliTravel Logo"
-                  width={160}
-                  height={35}
-                  className="h-9 w-auto"
-                />
+              <Link href="/" className="flex items-center gap-2 mb-4" aria-label="KosheliTravel Home">
+                <Plane className="h-8 w-8 text-primary" />
+                <span className="font-headline text-2xl font-bold text-primary">KosheliTravel</span>
               </Link>
                 {navLinks.map((link) => (
                   <Link
