@@ -24,7 +24,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={inter.variable}>
-      <body className="font-body">
+      <body className="font-body bg-background text-foreground">
         {adClient && !adClient.includes('YOUR_ADSENSE_CLIENT_ID') && (
             <Script
               id="adsense-script"
