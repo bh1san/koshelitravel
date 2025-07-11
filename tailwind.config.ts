@@ -32,7 +32,7 @@ export default {
           foreground: 'hsl(var(--popover-foreground))',
         },
         primary: {
-          DEFAULT: '#C7215D', // Raspberry Red
+          DEFAULT: 'hsl(var(--primary))', 
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
@@ -44,7 +44,7 @@ export default {
           foreground: 'hsl(var(--muted-foreground))',
         },
         accent: {
-          DEFAULT: '#64B5F6', // Vibrant Blue
+          DEFAULT: 'hsl(var(--accent))', 
           foreground: 'hsl(var(--accent-foreground))',
         },
         destructive: {
