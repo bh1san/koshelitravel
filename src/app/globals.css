@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    /* KosheliTravel Theme: Raspberry Red, Vibrant Blue */
+    /* KosheliTravel Theme: Values now controlled by tailwind.config.ts */
     --background: 220 13% 96%; /* Light Gray (#F0F4F8) */
     --foreground: 220 13% 10%;
     
@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 10%;
 
-    --primary: 340 70% 55%; /* Raspberry Red (approx. #C7215D) */
+    --primary: 340 70% 55%; /* Default, will be overridden by Tailwind config */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 13% 91%;
@@ -24,7 +24,7 @@
     --muted: 220 13% 91%;
     --muted-foreground: 220 13% 40%;
     
-    --accent: 207 90% 68%; /* Vibrant Blue (#64B5F6) */
+    --accent: 207 90% 68%; /* Default, will be overridden by Tailwind config */
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -49,7 +49,7 @@
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 340 70% 55%; /* Raspberry Red */
+    --primary: 340 70% 55%; /* Default, will be overridden by Tailwind config */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 217 33% 25%;
@@ -58,7 +58,7 @@
     --muted: 217 33% 25%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 207 90% 68%; /* Vibrant Blue */
+    --accent: 207 90% 68%; /* Default, will be overridden by Tailwind config */
     --accent-foreground: 222 47% 11%;
 
     --destructive: 0 63% 31%;
