@@ -8,8 +8,7 @@
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
-    "prestart": "pm2 delete kosheli-travel || true",
-    "start": "pm2 delete kosheli-travel && next start --port 3001 --hostname 0.0.0.0 || next start --port 3001 --hostname 0.0.0.0",
+    "start": "rm -rf .next && npm run build && pm2 start 'next start --port 3001 --hostname 0.0.0.0' --name kosheli-travel",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
