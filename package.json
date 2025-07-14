@@ -8,7 +8,7 @@
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "rm -rf .next && next build",
-    "start": "pm2 start next --name kosheli-travel -- start --port 3001",
+    "start": "pm2 start next --name kosheli-travel -- start --port 3002",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
