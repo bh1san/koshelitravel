@@ -4,8 +4,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'DropShipKit - Build Your Dropshipping Website',
-  description: 'Create and manage your dropshipping store with ease. DropShipKit provides all the tools you need to succeed.',
+  title: 'KosheliTravel - Your Next Adventure Awaits',
+  description: 'Personalized travel planning with AI-powered recommendations. Discover unique destinations with KosheliTravel.',
 };
 
 export default function RootLayout({
