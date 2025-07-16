@@ -4,11 +4,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3001",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
-    "start": "pm2 delete kosheli-travel --silent || true && pm2 start next --name kosheli-travel -- start --port 3008",
+    "start": "pm2 start npm --name kosheli-travel -- run dev",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
