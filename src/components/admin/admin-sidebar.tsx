@@ -3,31 +3,26 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Plane, LayoutDashboard, Package, FileText, Settings, ImageUp, GalleryHorizontalEnd, Users, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Store } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const adminNavLinks = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/packages', label: 'Manage Packages', icon: Package },
-  { href: '/admin/blogs', label: 'Manage Blogs', icon: FileText },
-  { href: '/admin/team', label: 'Manage Team', icon: Users },
-  { href: '/admin/visa-services', label: 'Manage Visa Services', icon: ClipboardList },
-  { href: '/admin/promo-settings', label: 'Promo Popup', icon: ImageUp },
-  { href: '/admin/banner-settings', label: 'Banner Settings', icon: GalleryHorizontalEnd },
-  // Future links can be added here e.g. Settings
-  // { href: '/admin/settings', label: 'Settings', icon: Settings },
+  { href: '/admin/users', label: 'Manage Users', icon: Users },
+  { href: '/admin/sites', label: 'Manage Sites', icon: Store },
+  { href: '/admin/settings', label: 'Platform Settings', icon: Settings },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col">
-      <div className="p-4 border-b border-sidebar-border">
-        <Link href="/admin" className="flex items-center gap-2" aria-label="KosheliTravel Admin Home">
-          <Plane className="h-7 w-7 text-sidebar-primary" />
-          <span className="font-headline text-xl font-bold text-sidebar-primary">Admin Panel</span>
+    <aside className="w-64 bg-card border-r border-border flex flex-col">
+      <div className="p-4 border-b border-border">
+        <Link href="/admin" className="flex items-center gap-2" aria-label="DropShipKit Admin Home">
+          <Store className="h-7 w-7 text-primary" />
+          <span className="font-headline text-xl font-bold text-primary">Admin Panel</span>
         </Link>
       </div>
       <nav className="flex-grow p-4 space-y-2">
@@ -35,11 +30,8 @@ export function AdminSidebar() {
           <Button
             key={link.href}
             asChild
-            variant={pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href)) ? 'secondary' : 'ghost'}
-            className={cn(
-              "w-full justify-start",
-              (pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href))) && "bg-sidebar-primary/10 text-sidebar-primary hover:bg-sidebar-primary/20"
-            )}
+            variant={pathname.startsWith(link.href) ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
           >
             <Link href={link.href} className="flex items-center gap-3">
               <link.icon className="h-5 w-5" />
@@ -48,7 +40,7 @@ export function AdminSidebar() {
           </Button>
         ))}
       </nav>
-      <div className="p-4 border-t border-sidebar-border mt-auto">
+      <div className="p-4 border-t border-border mt-auto">
         <Button variant="outline" className="w-full" asChild>
             <Link href="/">Back to Main Site</Link>
         </Button>

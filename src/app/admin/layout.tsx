@@ -3,8 +3,8 @@ import type { Metadata } from 'next';
 import { AdminSidebar } from '@/components/admin/admin-sidebar';
 
 export const metadata: Metadata = {
-  title: 'Admin Panel - KosheliTravel',
-  description: 'Manage KosheliTravel content and settings.',
+  title: 'Admin Panel - DropShipKit',
+  description: 'Manage DropShipKit user sites and platform settings.',
 };
 
 export default function AdminLayout({
