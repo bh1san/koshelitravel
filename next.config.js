@@ -24,14 +24,6 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: [
-      '@opentelemetry/instrumentation',
-      '@opentelemetry/sdk-node',
-      'handlebars',
-      'require-in-the-middle'
-    ],
-  },
 };
 
 module.exports = nextConfig;
