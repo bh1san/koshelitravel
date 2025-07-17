@@ -2,62 +2,71 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Users, Store } from 'lucide-react';
+import { Users, Package, ClipboardList, Palette } from 'lucide-react';
+import { readPackages } from '@/lib/package-store';
+import { readTeamMembers } from '@/lib/team-store';
 
-export default function AdminDashboardPage() {
+
+export default async function AdminDashboardPage() {
+  const packages = await readPackages();
+  const teamMembers = await readTeamMembers();
+
+  const stats = [
+    { title: 'Total Packages', value: packages.length, icon: <Package className="text-accent" /> },
+    { title: 'Team Members', value: teamMembers.length, icon: <Users className="text-accent" /> },
+    { title: 'Visa Services', value: 4, icon: <ClipboardList className="text-accent" /> },
+    { title: 'Active Promos', value: 1, icon: <Palette className="text-accent" /> },
+  ];
+
+
   return (
     <div className="space-y-8">
       <header>
         <h1 className="text-3xl font-bold text-primary">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Welcome to the DropShipKit Admin Panel.</p>
+        <p className="text-muted-foreground">Welcome to the KosheliTravel Admin Panel.</p>
       </header>
-
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Users className="text-accent" /> Manage Users</CardTitle>
-            <CardDescription>View and manage user accounts on the platform.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Link href="/admin/users">Go to Users</Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><Store className="text-accent" /> Manage Websites</CardTitle>
-            <CardDescription>Oversee and manage the dropshipping sites created by users.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              <Link href="/admin/sites">Go to Websites</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </section>
 
       <section>
         <h2 className="text-2xl font-semibold mb-4 text-primary">Platform At a Glance</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader><CardTitle className="text-lg">Total Users</CardTitle></CardHeader>
-            <CardContent><p className="text-3xl font-bold">0</p></CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle className="text-lg">Active Websites</CardTitle></CardHeader>
-            <CardContent><p className="text-3xl font-bold">0</p></CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle className="text-lg">Monthly Revenue</CardTitle></CardHeader>
-            <CardContent><p className="text-3xl font-bold">$0</p></CardContent>
-          </Card>
-          <Card>
-            <CardHeader><CardTitle className="text-lg">Support Tickets</CardTitle></CardHeader>
-            <CardContent><p className="text-3xl font-bold">0</p></CardContent>
-          </Card>
+          {stats.map(stat => (
+             <Card key={stat.title}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                    {stat.icon}
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                </CardContent>
+            </Card>
+          ))}
         </div>
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Package className="text-accent" /> Manage Packages</CardTitle>
+            <CardDescription>View, edit, and add new travel packages.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Link href="/admin/packages">Go to Packages</Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><Users className="text-accent" /> Manage Team</CardTitle>
+            <CardDescription>Add or remove members from the "About Us" page.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Link href="/admin/team">Go to Team</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );
