@@ -116,7 +116,7 @@ async function AllPackagesSection() {
                   fill
                   style={{ objectFit: 'cover' }}
                   className="transition-transform duration-500 group-hover:scale-110"
-                  data-ai-hint={pkg.dataAiHint}
+                  data-ai-hint={pkg.dataAiHint || ''}
                 />
                  <div className="absolute top-2 right-2 bg-primary/90 text-primary-foreground text-xs font-bold py-1 px-2 rounded-full capitalize">
                     {pkg.budgetCategory}
@@ -135,7 +135,7 @@ async function AllPackagesSection() {
               </CardContent>
               <CardFooter className="flex justify-between items-center bg-secondary/50 p-4">
                   <div>
-                    <span className="text-2xl font-bold text-primary">{pkg.price || 'Contact Us'}</span>
+                    <span className="text-2xl font-bold text-primary">{pkg.price}</span>
                   </div>
                  <Button asChild>
                     <Link href="/contact">Book Now</Link>
@@ -216,7 +216,7 @@ async function TeamSection() {
                     alt={`Photo of ${member.name}`}
                     fill
                     style={{ objectFit: 'cover' }}
-                    data-ai-hint={member.dataAiHint}
+                    data-ai-hint={member.dataAiHint || ''}
                   />
                 </div>
               </CardHeader>
@@ -252,3 +252,5 @@ export default async function Home() {
     </div>
   );
 }
+
+    
