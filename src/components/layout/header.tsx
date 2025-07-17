@@ -7,10 +7,10 @@ import Image from 'next/image';
 import { readSettings } from '@/lib/settings-store';
 
 const navLinks = [
-  { href: '/about', label: 'Team' },
-  { href: '/packages', label: 'Packages' },
-  { href: '/services', label: 'Services' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/#features', label: 'Features' },
+  { href: '/#packages', label: 'Packages' },
+  { href: '/#services', label: 'Services' },
+  { href: '/#team', label: 'Our Team' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -49,7 +49,7 @@ export async function Header() {
             </Link>
           ))}
           <Button asChild variant="default" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-            <Link href="/ai-planner">AI Planner</Link>
+            <Link href="/contact">Book Now</Link>
           </Button>
         </nav>
 
@@ -77,7 +77,7 @@ export async function Header() {
                   </Link>
                 ))}
                  <Button asChild className="bg-accent hover:bg-accent/90 text-accent-foreground mt-4 py-3 text-base">
-                  <Link href="/ai-planner">AI Planner</Link>
+                  <Link href="/contact">Book Now</Link>
                 </Button>
               </nav>
             </SheetContent>

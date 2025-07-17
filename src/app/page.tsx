@@ -84,7 +84,7 @@ async function FeaturedPackagesSection() {
   const packages = (await readPackages()).slice(0, 3); // Get first 3 packages
 
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section id="packages" className="py-16 md:py-24 bg-background">
       <div className="container">
         <div className="text-center mb-12">
           <Star className="w-12 h-12 text-primary mx-auto mb-4" />
@@ -146,7 +146,7 @@ function ServicesSection() {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-secondary">
+    <section id="services" className="py-16 md:py-24 bg-secondary">
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-headline font-bold text-primary">Our Core Services</h2>
@@ -179,7 +179,7 @@ async function TeamSection() {
   const teamMembers = (await readTeamMembers()).slice(0, 4); // Get first 4 members
 
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section id="team" className="py-16 md:py-24 bg-background">
       <div className="container">
         <div className="text-center mb-12">
           <Users className="w-12 h-12 text-primary mx-auto mb-4" />
