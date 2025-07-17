@@ -8,101 +8,6 @@ import { unstable_noStore as noStore } from 'next/cache';
 
 const storePath = path.join(process.cwd(), 'package-store.json');
 
-const defaultPackages: TravelPackage[] = [
-  {
-    id: '1',
-    title: 'Parisian Dreams',
-    destination: 'Paris, France',
-    description: 'Experience the magic of Paris, from the Eiffel Tower to charming Montmartre. Includes museum passes and a Seine river cruise.',
-    price: '$1200',
-    duration: '7 Days',
-    image: 'https://placehold.co/600x400.png',
-    dataAiHint: 'paris eiffel tower',
-    date: '2024-09-10',
-    budgetCategory: 'mid-range',
-    tags: ['europe', 'city break', 'romance']
-  },
-  {
-    id: '2',
-    title: 'Tokyo Adventure',
-    destination: 'Tokyo, Japan',
-    description: 'Explore the vibrant culture of Tokyo, from ancient temples to futuristic skyscrapers. Includes a guided tour of Tsukiji Market.',
-    price: '$2200',
-    duration: '10 Days',
-    image: 'https://placehold.co/600x400.png',
-    dataAiHint: 'tokyo japan',
-    date: '2024-10-05',
-    budgetCategory: 'luxury',
-    tags: ['asia', 'culture', 'foodie']
-  },
-  {
-    id: '3',
-    title: 'Roman Holiday',
-    destination: 'Rome, Italy',
-    description: 'Discover ancient wonders and culinary delights in the heart of Italy. Colosseum and Vatican City tours included.',
-    price: '$1500',
-    duration: '8 Days',
-    image: 'https://placehold.co/600x400.png',
-    dataAiHint: 'rome colosseum',
-    date: '2024-11-20',
-    budgetCategory: 'mid-range',
-    tags: ['europe', 'history', 'culture']
-  },
-  {
-    id: '4',
-    title: 'Bali Bliss',
-    destination: 'Bali, Indonesia',
-    description: 'Relax on stunning beaches, explore lush rice paddies, and immerse yourself in Balinese culture. Yoga retreat option available.',
-    price: '$900',
-    duration: '10 Days',
-    image: 'https://placehold.co/600x400.png',
-    dataAiHint: 'bali beach',
-    date: '2025-01-15',
-    budgetCategory: 'budget',
-    tags: ['asia', 'beach', 'relaxation', 'nature']
-  },
-  {
-    id: '5',
-    title: 'NYC Explorer',
-    destination: 'New York, USA',
-    description: 'Experience the city that never sleeps. Includes Broadway show tickets and a visit to the Statue of Liberty.',
-    price: '$1800',
-    duration: '7 Days',
-    image: 'https://placehold.co/600x400.png',
-    dataAiHint: 'new york city',
-    date: '2024-12-01',
-    budgetCategory: 'luxury',
-    tags: ['north america', 'city break', 'entertainment']
-  },
-  {
-    id: '6',
-    title: 'Santorini Sunsets',
-    destination: 'Santorini, Greece',
-    description: 'Witness breathtaking sunsets over the Aegean Sea from your cliffside villa. Includes island hopping and wine tasting.',
-    price: '$2500',
-    duration: '7 Days',
-    image: 'https://placehold.co/600x400.png',
-    dataAiHint: 'santorini greece',
-    date: '2024-09-25',
-    budgetCategory: 'luxury',
-    tags: ['europe', 'beach', 'romance', 'luxury']
-  },
-  {
-    id: '7',
-    title: 'Dubai Desert & Skyline',
-    destination: 'Dubai, UAE',
-    description: 'Experience the modern marvels and traditional charm of Dubai. Includes a thrilling desert safari, visit to Burj Khalifa, and shopping at Dubai Mall.',
-    price: '$1950',
-    duration: '6 Days',
-    image: 'https://www.imghippo.com/i/hV7929iHQ.jpg',
-    dataAiHint: 'dubai skyline desert',
-    date: '2024-11-10',
-    budgetCategory: 'luxury',
-    tags: ['middle east', 'city break', 'adventure', 'luxury']
-  },
-];
-
-
 export async function readPackages(): Promise<TravelPackage[]> {
   noStore();
   try {
@@ -110,9 +15,11 @@ export async function readPackages(): Promise<TravelPackage[]> {
     return JSON.parse(fileContent);
   } catch (error: any) {
     if (error.code === 'ENOENT') {
-      console.log('package-store.json not found, initializing with default data.');
-      await writePackages(defaultPackages);
-      return defaultPackages;
+      // If the file doesn't exist, it means something is wrong,
+      // as it should be part of the project.
+      // Return an empty array to prevent a crash and log a severe error.
+      console.error('CRITICAL: package-store.json is missing.');
+      return [];
     }
     console.error('Failed to read package store:', error);
     throw new Error('Could not read package data.');
