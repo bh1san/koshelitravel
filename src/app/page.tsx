@@ -135,7 +135,7 @@ async function AllPackagesSection() {
               </CardContent>
               <CardFooter className="flex justify-between items-center bg-secondary/50 p-4">
                   <div>
-                    <span className="text-2xl font-bold text-primary">{pkg.price}</span>
+                    <span className="text-2xl font-bold text-primary">{pkg.price || 'Contact Us'}</span>
                   </div>
                  <Button asChild>
                     <Link href="/contact">Book Now</Link>
