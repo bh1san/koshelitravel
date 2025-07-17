@@ -11,6 +11,7 @@ const settingsFilePath = path.join(process.cwd(), 'settings-store.json');
 
 // Type for the settings structure
 interface SiteSettings {
+  logoUrl: string;
   banner: {
     imageUrl: string;
     title: string;

@@ -4,9 +4,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { GalleryHorizontalEnd, ImageUp, Palette } from 'lucide-react';
+import { GalleryHorizontalEnd, ImageUp, Palette, Image as ImageIcon } from 'lucide-react';
 
 const settingsNavLinks = [
+  { href: '/admin/logo-settings', label: 'Logo', icon: ImageIcon },
   { href: '/admin/banner-settings', label: 'Banner', icon: GalleryHorizontalEnd },
   { href: '/admin/promo-settings', label: 'Promotions', icon: ImageUp },
   // { href: '/admin/settings/theme', label: 'Theme', icon: Palette }, // Theme page can be added later

@@ -3,9 +3,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Settings, Package, ClipboardList, Home, Plane } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Package, ClipboardList, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Plane } from 'lucide-react';
+
 
 const adminNavLinks = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -29,7 +31,7 @@ export function AdminSidebar() {
       <nav className="flex-grow p-4 space-y-2">
         {adminNavLinks.map((link) => {
           const isActive = link.href === '/admin/settings' 
-            ? pathname.startsWith('/admin/banner-settings') || pathname.startsWith('/admin/promo-settings') || pathname === '/admin/settings'
+            ? pathname.startsWith('/admin/banner-settings') || pathname.startsWith('/admin/promo-settings') || pathname.startsWith('/admin/logo-settings') || pathname === '/admin/settings'
             : pathname.startsWith(link.href) && (link.href !== '/admin' || pathname === '/admin');
 
           return (

@@ -2,15 +2,33 @@
 import Link from 'next/link';
 import { Plane, Mail, Phone, Facebook, Instagram, Twitter } from 'lucide-react';
 import { NewsletterForm } from '@/components/common/newsletter-form';
+import Image from 'next/image';
+import { readSettings } from '@/lib/settings-store';
 
-export function Footer() {
+
+export async function Footer() {
+  const settings = await readSettings();
+  const logoUrl = settings.logoUrl;
+
+  const Logo = () => (
+    <>
+      {logoUrl ? (
+        <Image src={logoUrl} alt="KosheliTravel Logo" width={150} height={40} className="h-10 w-auto" />
+      ) : (
+        <>
+          <Plane className="h-8 w-8 text-primary" />
+          <span className="font-headline text-2xl font-bold text-primary">KosheliTravel</span>
+        </>
+      )}
+    </>
+  );
+
   return (
     <footer className="bg-secondary text-secondary-foreground py-12 md:py-16">
       <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
         <div>
           <Link href="/" className="flex items-center gap-2 mb-4" aria-label="KosheliTravel Home">
-            <Plane className="h-8 w-8 text-primary" />
-            <span className="font-headline text-2xl font-bold text-primary">KosheliTravel</span>
+            <Logo />
           </Link>
           <p className="text-sm leading-relaxed">
             Crafting unforgettable journeys with a blend of AI precision and human expertise.
