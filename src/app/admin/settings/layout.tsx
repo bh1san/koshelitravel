@@ -7,9 +7,9 @@ import { cn } from '@/lib/utils';
 import { GalleryHorizontalEnd, ImageUp, Palette } from 'lucide-react';
 
 const settingsNavLinks = [
-  { href: '/admin/settings/banner', label: 'Banner', icon: GalleryHorizontalEnd },
-  { href: '/admin/settings/promo', label: 'Promotions', icon: ImageUp },
-  { href: '/admin/settings/theme', label: 'Theme', icon: Palette },
+  { href: '/admin/banner-settings', label: 'Banner', icon: GalleryHorizontalEnd },
+  { href: '/admin/promo-settings', label: 'Promotions', icon: ImageUp },
+  // { href: '/admin/settings/theme', label: 'Theme', icon: Palette }, // Theme page can be added later
 ];
 
 export default function SettingsLayout({

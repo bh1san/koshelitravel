@@ -106,7 +106,7 @@ export default function BannerSettingsPage() {
                 folder="banners"
               />
               <p className="text-xs text-muted-foreground mt-2">
-                Upload a new image for the hero banner.
+                Upload a new image for the hero banner. Recommended size: 1920x1080.
               </p>
             </div>
             <div className="text-sm text-muted-foreground text-center">OR</div>

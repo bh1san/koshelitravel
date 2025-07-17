@@ -5,7 +5,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { TeamMember } from '@/lib/mock-data';
-import { readTeamMembers } from '@/lib/team-store'; // We'll still need this for initial client-side fetch
+import { readTeamMembers } from '@/lib/team-store';
 import { updateTeamMember } from '@/app/actions/teamActions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -16,12 +16,15 @@ import { ArrowLeft, Save, UserCog, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from '@/components/admin/image-uploader';
 
-// This is a new wrapper component to fetch data on the server first
-export default function EditTeamMemberPageWrapper() {
+export default function EditTeamMemberPage() {
+  const router = useRouter();
   const params = useParams();
   const { id } = params;
+  const { toast } = useToast();
+
   const [member, setMember] = useState<TeamMember | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isNotFound, setIsNotFound] = useState(false);
 
   useEffect(() => {
@@ -32,7 +35,6 @@ export default function EditTeamMemberPageWrapper() {
         const foundMember = members.find(m => m.id === id);
         if (foundMember) {
           setMember(foundMember);
-          setIsNotFound(false);
         } else {
           setIsNotFound(true);
         }
@@ -41,6 +43,40 @@ export default function EditTeamMemberPageWrapper() {
       fetchMember();
     }
   }, [id]);
+  
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (!member) return;
+      setMember({ ...member, [e.target.id]: e.target.value });
+  };
+  
+  const handleImageUploadComplete = (url: string) => {
+      if (!member) return;
+      setMember({ ...member, image: url });
+  };
+
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!member) return;
+
+    setIsSubmitting(true);
+    const result = await updateTeamMember(member);
+
+    if (result.success) {
+      toast({
+        title: "Team Member Updated",
+        description: `"${member.name}"'s details have been successfully updated.`,
+      });
+      router.push('/admin/team');
+    } else {
+      toast({
+        title: "Error",
+        description: result.message,
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
+  };
 
   if (isLoading) {
     return <div className="text-center p-10"><Loader2 className="mr-2 h-6 w-6 animate-spin mx-auto" /> Loading team member data...</div>;
@@ -64,55 +100,7 @@ export default function EditTeamMemberPageWrapper() {
      );
   }
 
-  return member ? <EditTeamMemberPage member={member} /> : null;
-}
-
-
-// The original component now receives the member data as a prop
-function EditTeamMemberPage({ member }: { member: TeamMember }) {
-  const router = useRouter();
-  const { toast } = useToast();
-
-  const [name, setName] = useState(member.name);
-  const [role, setRole] = useState(member.role);
-  const [bio, setBio] = useState(member.bio);
-  const [image, setImage] = useState(member.image);
-  const [dataAiHint, setDataAiHint] = useState(member.dataAiHint || '');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setIsSubmitting(true);
-
-    const updatedMemberData: TeamMember = {
-      ...member,
-      name,
-      role,
-      bio,
-      image: image || 'https://placehold.co/300x300.png',
-      dataAiHint: dataAiHint || 'person portrait',
-    };
-
-    const result = await updateTeamMember(updatedMemberData);
-
-    if (result.success) {
-      toast({
-        title: "Team Member Updated",
-        description: `"${name}"'s details have been successfully updated.`,
-      });
-      router.push('/admin/team');
-    } else {
-      toast({
-        title: "Error",
-        description: result.message,
-        variant: "destructive",
-      });
-    }
-    
-    setIsSubmitting(false);
-  };
-
+  if (!member) return null;
 
   return (
     <div className="space-y-6">
@@ -128,32 +116,32 @@ function EditTeamMemberPage({ member }: { member: TeamMember }) {
           <CardContent className="space-y-4">
             <div>
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+              <Input id="name" value={member.name} onChange={handleFormChange} required />
             </div>
             <div>
               <Label htmlFor="role">Role / Position</Label>
-              <Input id="role" value={role} onChange={(e) => setRole(e.target.value)} required />
+              <Input id="role" value={member.role} onChange={handleFormChange} required />
             </div>
             <div>
               <Label htmlFor="bio">Biography / Short Description</Label>
-              <Textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} rows={4} required />
+              <Textarea id="bio" value={member.bio} onChange={handleFormChange} rows={4} required />
             </div>
             <div>
               <Label>Member Photo</Label>
               <ImageUploader 
-                onUploadComplete={setImage}
-                currentImageUrl={image}
+                onUploadComplete={handleImageUploadComplete}
+                currentImageUrl={member.image}
                 folder="team"
               />
             </div>
             <div className="text-sm text-muted-foreground text-center">OR</div>
             <div>
-              <Label htmlFor="imageUrl">Or Paste Image URL</Label>
+              <Label htmlFor="image">Or Paste Image URL</Label>
               <Input
-                id="imageUrl"
+                id="image"
                 type="text"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
+                value={member.image}
+                onChange={handleFormChange}
                 placeholder="https://example.com/image.png"
               />
               <p className="text-xs text-muted-foreground mt-1">Pasting a URL here will override the uploaded image. The preview above will update.</p>
@@ -162,8 +150,8 @@ function EditTeamMemberPage({ member }: { member: TeamMember }) {
               <Label htmlFor="dataAiHint">Image AI Hint</Label>
               <Input 
                 id="dataAiHint" 
-                value={dataAiHint} 
-                onChange={(e) => setDataAiHint(e.target.value)} 
+                value={member.dataAiHint || ''} 
+                onChange={handleFormChange} 
                 placeholder="e.g., person professional" 
               />
               <p className="text-xs text-muted-foreground mt-1">Keywords for image description (max 2 words). Defaults to "person portrait".</p>

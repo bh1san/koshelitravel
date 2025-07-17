@@ -5,8 +5,8 @@
 
 @layer base {
   :root {
-    /* KosheliTravel Theme: Values now controlled by tailwind.config.ts */
-    --background: 220 13% 96%; /* Light Gray (#F0F4F8) */
+    /* KosheliTravel Theme */
+    --background: 220 20% 97%; /* Light Gray (#F0F4F8) */
     --foreground: 220 13% 10%;
     
     --card: 0 0% 100%;
@@ -15,7 +15,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 10%;
 
-    --primary: 340 70% 46%; /* Raspberry Red: #C7215D */
+    --primary: 207 82% 66%; /* Soft Blue (#64B5F6) */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 13% 91%;
@@ -24,8 +24,8 @@
     --muted: 220 13% 91%;
     --muted-foreground: 220 13% 40%;
     
-    --accent: 207 82% 66%; /* Vibrant Blue: #64B5F6 */
-    --accent-foreground: 210 40% 98%;
+    --accent: 14 100% 70%; /* Coral Orange (#FF8A65) */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -33,7 +33,7 @@
     --border: 220 13% 86%;
     --input: 220 13% 89%;
     --input-border: 220 13% 80%;
-    --ring: 340 70% 46%;
+    --ring: 207 82% 66%; /* Soft Blue for ring */
 
     --radius: 0.5rem;
   }
@@ -49,8 +49,8 @@
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 340 70% 55%; /* Raspberry Red */
-    --primary-foreground: 0 0% 100%;
+    --primary: 207 82% 66%; /* Soft Blue */
+    --primary-foreground: 222 47% 11%;
 
     --secondary: 217 33% 25%;
     --secondary-foreground: 210 40% 98%;
@@ -58,7 +58,7 @@
     --muted: 217 33% 25%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 207 90% 68%; /* Vibrant Blue */
+    --accent: 14 100% 70%; /* Coral Orange */
     --accent-foreground: 222 47% 11%;
 
     --destructive: 0 63% 31%;
@@ -67,7 +67,7 @@
     --border: 217 33% 25%;
     --input: 217 33% 25%;
     --input-border: 217 33% 25%;
-    --ring: 340 70% 55%;
+    --ring: 207 82% 66%;
   }
 }
 

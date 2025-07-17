@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, UserPlus } from 'lucide-react';
+import { ArrowLeft, Save, UserPlus, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { TeamMember } from '@/lib/mock-data'; 
 import { addTeamMember } from '@/app/actions/teamActions';
@@ -22,7 +22,7 @@ export default function NewTeamMemberPage() {
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [bio, setBio] = useState('');
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState('https://placehold.co/300x300.png');
   const [dataAiHint, setDataAiHint] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,9 +53,8 @@ export default function NewTeamMemberPage() {
         description: result.message,
         variant: "destructive",
       });
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
@@ -116,7 +115,7 @@ export default function NewTeamMemberPage() {
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isLoading} className="bg-accent hover:bg-accent/90 text-accent-foreground">
-              {isLoading ? 'Adding...' : <><Save className="mr-2 h-4 w-4" /> Add Member</>}
+              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Adding...</> : <><Save className="mr-2 h-4 w-4" /> Add Member</>}
             </Button>
           </CardFooter>
         </form>

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Edit, PlusCircle, Package as PackageIcon } from 'lucide-react';
 import Image from 'next/image';
+import { PackageActions } from './package-actions';
 
 export default async function AdminPackagesPage() {
   const packages = await readPackages();
@@ -53,12 +54,7 @@ export default async function AdminPackagesPage() {
                     <TableCell>{pkg.price}</TableCell>
                     <TableCell>{pkg.duration}</TableCell>
                     <TableCell className="text-right space-x-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/admin/packages/${pkg.id}/edit`}>
-                          <Edit className="mr-2 h-4 w-4" /> Edit
-                        </Link>
-                      </Button>
-                      {/* Delete functionality can be added here with an AlertDialog */}
+                       <PackageActions packageId={pkg.id} packageTitle={pkg.title} />
                     </TableCell>
                   </TableRow>
                 ))}

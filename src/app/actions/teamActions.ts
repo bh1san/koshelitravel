@@ -35,6 +35,7 @@ export async function updateTeamMember(updatedMember: TeamMember): Promise<{ suc
 
         revalidatePath('/about');
         revalidatePath('/admin/team');
+        revalidatePath(`/admin/team/${updatedMember.id}/edit`);
 
         return { success: true, message: 'Team member updated successfully.' };
     } catch (error) {

@@ -5,5 +5,5 @@ import { redirect } from 'next/navigation';
 
 export default function SettingsPage() {
   // Redirect to the first settings tab by default
-  redirect('/admin/settings/banner');
+  redirect('/admin/banner-settings');
 }

@@ -14,25 +14,7 @@ import { ArrowLeft, Save, Loader2, PackagePlus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { TravelPackage } from '@/lib/mock-data';
 import { ImageUploader } from '@/components/admin/image-uploader';
-import { writePackages, readPackages } from '@/lib/package-store';
-import { revalidatePath } from 'next/cache';
-
-// This is a server action now to handle form submission
-async function addPackage(newPkg: TravelPackage) {
-    'use server';
-    try {
-        const packages = await readPackages();
-        packages.push(newPkg);
-        await writePackages(packages);
-        revalidatePath('/admin/packages');
-        revalidatePath('/packages');
-        return { success: true, message: 'Package added successfully.' };
-    } catch (error) {
-        console.error("Failed to add package:", error);
-        return { success: false, message: 'Failed to add package on the server.' };
-    }
-}
-
+import { addPackage } from '@/app/actions/packageActions';
 
 export default function NewPackagePage() {
     const router = useRouter();
@@ -45,7 +27,7 @@ export default function NewPackagePage() {
         description: '',
         price: '',
         duration: '',
-        image: '',
+        image: 'https://placehold.co/600x400.png',
         date: '',
         budgetCategory: 'mid-range',
         tags: [],

@@ -1,86 +1,16 @@
 
-'use client';
-
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import type { TeamMember } from '@/lib/mock-data';
+import Image from 'next/image';
 import { readTeamMembers } from '@/lib/team-store';
-import { deleteTeamMember } from '@/app/actions/teamActions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Edit, PlusCircle, Trash2, Users } from 'lucide-react';
-import { useToast } from "@/hooks/use-toast";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import Image from 'next/image';
+import { PlusCircle, Users } from 'lucide-react';
+import { TeamMemberActions } from './team-member-actions';
 
 // This component now fetches its initial data on the server.
-// We wrap the client-side logic in a separate component.
-export default function AdminTeamPageWrapper() {
-  const [initialMembers, setInitialMembers] = useState<TeamMember[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadMembers() {
-      const members = await readTeamMembers();
-      setInitialMembers(members);
-      setIsLoading(false);
-    }
-    loadMembers();
-  }, []);
-
-  if (isLoading) {
-    return <div>Loading team members...</div>
-  }
-  
-  return <AdminTeamPage initialMembers={initialMembers} />;
-}
-
-
-function AdminTeamPage({ initialMembers }: { initialMembers: TeamMember[] }) {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialMembers);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    // This syncs the state if the initialMembers prop changes (e.g., after revalidation)
-    setTeamMembers(initialMembers);
-  }, [initialMembers]);
-
-
-  const handleDelete = async (memberId: string, memberName: string) => {
-    const result = await deleteTeamMember(memberId);
-    
-    if (result.success) {
-        // Optimistically update UI, but the revalidation from the server action is the source of truth
-        const updatedMembers = teamMembers.filter(m => m.id !== memberId);
-        setTeamMembers(updatedMembers);
-        
-        toast({
-          title: "Team Member Deleted",
-          description: `"${memberName}" has been successfully deleted.`,
-        });
-
-        // Manually trigger a refresh to be sure we get the revalidated data
-        // A better approach would be to rely solely on revalidatePath, but this is a failsafe
-        // router.refresh(); 
-    } else {
-        toast({
-          title: "Error",
-          description: result.message,
-          variant: "destructive",
-        });
-    }
-  };
+export default async function AdminTeamPage() {
+  const teamMembers = await readTeamMembers();
 
   return (
     <div className="space-y-6">
@@ -120,34 +50,8 @@ function AdminTeamPage({ initialMembers }: { initialMembers: TeamMember[] }) {
                     </TableCell>
                     <TableCell className="font-medium">{member.name}</TableCell>
                     <TableCell>{member.role}</TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/admin/team/${member.id}/edit`}>
-                          <Edit className="mr-2 h-4 w-4" /> Edit
-                        </Link>
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="destructive" size="sm">
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the team member
-                              "{member.name}".
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(member.id, member.name)}>
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                    <TableCell className="text-right">
+                      <TeamMemberActions memberId={member.id} memberName={member.name} />
                     </TableCell>
                   </TableRow>
                 ))}

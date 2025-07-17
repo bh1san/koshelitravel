@@ -76,7 +76,7 @@ export const mockTestimonials: Testimonial[] = [
     author: 'Sarah L.',
     location: 'New York, USA',
     image: 'https://placehold.co/100x100.png',
-    dataAiHint: 'dubai tour'
+    dataAiHint: 'woman smiling professional'
   },
   {
     id: '2',
@@ -84,7 +84,7 @@ export const mockTestimonials: Testimonial[] = [
     author: 'John B.',
     location: 'London, UK',
     image: 'https://placehold.co/100x100.png',
-    dataAiHint: 'dubai vacation'
+    dataAiHint: 'family beach vacation'
   },
   {
     id: '3',
@@ -92,7 +92,7 @@ export const mockTestimonials: Testimonial[] = [
     author: 'Maria G.',
     location: 'Toronto, Canada',
     image: 'https://placehold.co/100x100.png',
-    dataAiHint: 'dubai landmark'
+    dataAiHint: 'woman solo traveler'
   },
 ];
 
