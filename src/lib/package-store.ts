@@ -94,7 +94,7 @@ const defaultPackages: TravelPackage[] = [
     description: 'Experience the modern marvels and traditional charm of Dubai. Includes a thrilling desert safari, visit to Burj Khalifa, and shopping at Dubai Mall.',
     price: '$1950',
     duration: '6 Days',
-    image: 'https://placehold.co/600x400.png',
+    image: 'https://www.imghippo.com/i/hV7929iHQ.jpg',
     dataAiHint: 'dubai skyline desert',
     date: '2024-11-10',
     budgetCategory: 'luxury',
