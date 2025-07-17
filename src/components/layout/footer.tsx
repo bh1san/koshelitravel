@@ -43,9 +43,9 @@ export async function Footer() {
         <div>
           <h3 className="text-lg font-semibold mb-4 font-headline text-primary">Quick Links</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-            <li><Link href="/packages" className="hover:text-primary transition-colors">Packages</Link></li>
-            <li><Link href="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
+            <li><Link href="/#team" className="hover:text-primary transition-colors">Our Team</Link></li>
+            <li><Link href="/#all-packages" className="hover:text-primary transition-colors">Packages</Link></li>
+            <li><Link href="/#services" className="hover:text-primary transition-colors">Services</Link></li>
             <li><Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
             <li><Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
           </ul>
@@ -57,7 +57,7 @@ export async function Footer() {
           <NewsletterForm />
           <div className="mt-6 space-y-2 text-sm">
             <p className="flex items-center gap-2"><Mail size={16} className="text-accent"/> support@koshelitravel.com</p>
-            <p className="flex items-center gap-2"><Phone size={16} className="text-accent"/> +1 (555) 123-4567</p>
+            <p className="flex items-center gap-2"><Phone size={16} className="text-accent"/> +971 (4) 123-4567</p>
           </div>
         </div>
       </div>

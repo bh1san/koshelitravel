@@ -8,7 +8,7 @@ import { readSettings } from '@/lib/settings-store';
 
 const navLinks = [
   { href: '/#features', label: 'Features' },
-  { href: '/#packages', label: 'Packages' },
+  { href: '/#all-packages', label: 'Packages' },
   { href: '/#services', label: 'Services' },
   { href: '/#team', label: 'Our Team' },
   { href: '/contact', label: 'Contact' },
