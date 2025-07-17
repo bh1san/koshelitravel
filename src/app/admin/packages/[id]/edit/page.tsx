@@ -132,7 +132,7 @@ export default function EditPackagePage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <Label htmlFor="price">Price</Label>
-                                <Input id="price" value={pkg.price} onChange={handleFormChange} placeholder="$1500" required />
+                                <Input id="price" value={pkg.price} onChange={handleFormChange} placeholder="e.g., 5500 AED" required />
                             </div>
                             <div>
                                 <Label htmlFor="duration">Duration</Label>

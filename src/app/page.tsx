@@ -115,7 +115,6 @@ async function FeaturedPackagesSection() {
               <CardFooter className="flex justify-between items-center bg-secondary/50 p-4">
                   <div>
                     <span className="text-2xl font-bold text-primary">{pkg.price}</span>
-                    <span className="text-xs text-muted-foreground">/person</span>
                   </div>
                  <Button asChild>
                     <Link href={`/packages/${pkg.id}`}>View Details</Link>

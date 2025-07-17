@@ -9,8 +9,8 @@ import { Footer } from '@/components/layout/footer';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Search, DollarSign, Clock, CalendarDays, ListFilter } from 'lucide-react';
@@ -25,7 +25,6 @@ export default function PackagesPage({
   const [budgetCategory, setBudgetCategory] = useState('all');
   const [sortOrder, setSortOrder] = useState('default');
 
-  // This would be a server fetch in a real app
   useState(() => {
     async function loadPackages() {
       const pkgs = await readPackages();
@@ -45,12 +44,14 @@ export default function PackagesPage({
         budgetCategory === 'all' || pkg.budgetCategory === budgetCategory
       );
 
+    const priceToNumber = (price: string) => parseFloat(price.replace(/[^0-9.]/g, ''));
+
     switch (sortOrder) {
       case 'price_asc':
-        filtered.sort((a, b) => parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', '')));
+        filtered.sort((a, b) => priceToNumber(a.price) - priceToNumber(b.price));
         break;
       case 'price_desc':
-        filtered.sort((a, b) => parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', '')));
+        filtered.sort((a, b) => priceToNumber(b.price) - priceToNumber(a.price));
         break;
       case 'date_asc':
         filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -154,7 +155,6 @@ export default function PackagesPage({
                     <CardFooter className="flex justify-between items-center bg-secondary/50 p-4">
                         <div>
                             <span className="text-2xl font-bold text-primary">{pkg.price}</span>
-                            <span className="text-xs text-muted-foreground">/person</span>
                         </div>
                         <Button asChild>
                             <Link href={`/packages/${pkg.id}`}>View Details</Link>
