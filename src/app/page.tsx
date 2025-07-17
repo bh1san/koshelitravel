@@ -3,39 +3,44 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Plane, Search, HandCoins, Users, Star, Tag, Briefcase, GraduationCap, CalendarDays, Clock, DollarSign } from 'lucide-react';
+import { Plane, Search, HandCoins, Users, Star, Tag, Briefcase, GraduationCap, CalendarDays, Clock, DollarSign, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { readTeamMembers } from '@/lib/team-store';
 import { readPackages } from '@/lib/package-store';
 import { readSettings } from '@/lib/settings-store';
 import { mockVisaOptions, type TravelPackage } from '@/lib/mock-data';
+import { AIPlannerSearch } from '@/components/common/ai-planner-search';
 
 async function HeroSection() {
   const { banner } = await readSettings();
 
   return (
     <section 
-      className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[70vh] flex items-center animate-fadeIn" 
+      className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[70vh] flex items-center justify-center animate-fadeIn" 
       style={{ backgroundImage: `url('${banner.imageUrl || 'https://placehold.co/1920x1080.png'}')` }}
       data-ai-hint="dubai skyline desert"
     >
       <div className="absolute inset-0 bg-black/70 z-0"></div>
       <div className="container relative z-10 text-center">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-6 text-white shadow-text">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-4 text-white shadow-text">
           {banner.title}
         </h1>
-        <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/90 shadow-text">
+        <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto text-white/90 shadow-text">
           {banner.subtitle}
         </p>
-        <div className="space-x-4">
-          <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-3 text-lg">
-            <Link href="#all-packages">Explore Packages</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-3 text-lg">
-            <Link href="/contact">Contact Us</Link>
-          </Button>
-        </div>
+        
+        <Card className="max-w-2xl mx-auto p-4 sm:p-6 bg-background/20 backdrop-blur-sm border-white/20">
+          <CardHeader className="p-0 pb-4 text-left">
+            <CardTitle className="text-xl sm:text-2xl text-white flex items-center gap-3">
+              <Wand2 className="text-accent" /> AI Travel Planner
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+             <AIPlannerSearch />
+          </CardContent>
+        </Card>
+
       </div>
     </section>
   );

@@ -16,6 +16,7 @@ export default function BannerSettingsPage() {
   const [bannerTitle, setBannerTitle] = useState('');
   const [bannerSubtitle, setBannerSubtitle] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export default function BannerSettingsPage() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setIsLoading(true);
+    setIsSubmitting(true);
     
     try {
       const response = await fetch('/api/settings/banner', {
@@ -81,11 +82,11 @@ export default function BannerSettingsPage() {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
   
-  if (isLoading && !bannerTitle) { // Show loading indicator only on initial load
+  if (isLoading && !bannerTitle) {
     return <div className="text-center p-10">Loading settings...</div>;
   }
 
@@ -147,8 +148,8 @@ export default function BannerSettingsPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Banner Settings</>}
+            <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Banner Settings</>}
             </Button>
           </CardFooter>
         </form>

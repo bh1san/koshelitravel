@@ -13,7 +13,7 @@ const adminNavLinks = [
   { href: '/admin/packages', label: 'Packages', icon: Package },
   { href: '/admin/team', label: 'Manage Team', icon: Users },
   { href: '/admin/visa-services', label: 'Visa Services', icon: ClipboardList },
-  { href: '/admin/settings', label: 'Site Settings', icon: Settings },
+  { href: '/admin/settings', label: 'Site Settings', icon: Settings, checkStartsWith: true },
 ];
 
 export function AdminSidebar() {
@@ -29,9 +29,24 @@ export function AdminSidebar() {
       </div>
       <nav className="flex-grow p-4 space-y-2">
         {adminNavLinks.map((link) => {
-          const isActive = link.href === '/admin/settings' 
-            ? pathname.startsWith('/admin/logo-settings') || pathname.startsWith('/admin/banner-settings') || pathname.startsWith('/admin/promo-settings') || pathname === '/admin/settings'
-            : pathname.startsWith(link.href) && (link.href !== '/admin' || pathname === '/admin');
+          let isActive = false;
+          if (link.checkStartsWith) {
+              isActive = pathname.startsWith(link.href) || 
+                         pathname.startsWith('/admin/logo-settings') ||
+                         pathname.startsWith('/admin/banner-settings') ||
+                         pathname.startsWith('/admin/promo-settings');
+          } else {
+            isActive = pathname === link.href;
+          }
+
+          // Special case for dashboard to avoid matching all /admin/* routes
+          if (link.href === '/admin' && pathname !== '/admin') {
+            isActive = false;
+          }
+          if (link.href !== '/admin' && link.href !== '/admin/settings' && pathname.startsWith(link.href)) {
+             isActive = true;
+          }
+
 
           return (
             <Button

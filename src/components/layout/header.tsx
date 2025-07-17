@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Menu, Plane } from 'lucide-react';
+import { Menu, Plane, Wand2 } from 'lucide-react';
 import Image from 'next/image';
 import { readSettings } from '@/lib/settings-store';
 
@@ -11,6 +11,7 @@ const navLinks = [
   { href: '/#all-packages', label: 'Packages' },
   { href: '/#services', label: 'Services' },
   { href: '/#team', label: 'Our Team' },
+  { href: '/ai-planner', label: 'AI Planner', icon: Wand2 },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -43,8 +44,9 @@ export async function Header() {
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-foreground/70 transition-colors hover:text-primary"
+              className="text-sm font-medium text-foreground/70 transition-colors hover:text-primary flex items-center gap-1.5"
             >
+              {link.icon && <link.icon className="h-4 w-4" />}
               {link.label}
             </Link>
           ))}
@@ -71,8 +73,9 @@ export async function Header() {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="text-lg font-medium text-foreground transition-colors hover:text-primary"
+                    className="text-lg font-medium text-foreground transition-colors hover:text-primary flex items-center gap-2"
                   >
+                    {link.icon && <link.icon className="h-5 w-5" />}
                     {link.label}
                   </Link>
                 ))}
