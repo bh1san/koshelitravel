@@ -102,7 +102,7 @@ export default function AdminTeamPage() {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(member.id, member.name)}>
+                            <AlertDialogAction onClick={async () => await handleDelete(member.id, member.name)}>
                               Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>
