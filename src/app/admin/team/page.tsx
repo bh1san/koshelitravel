@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import type { TeamMember } from '@/lib/mock-data';
 import { readTeamMembers } from '@/lib/team-store';
 import { deleteTeamMember } from '@/app/actions/teamActions';
@@ -23,23 +23,44 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export default function AdminTeamPage() {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+// This component now fetches its initial data on the server.
+// We wrap the client-side logic in a separate component.
+export default function AdminTeamPageWrapper() {
+  const [initialMembers, setInitialMembers] = useState<TeamMember[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadMembers() {
+      const members = await readTeamMembers();
+      setInitialMembers(members);
+      setIsLoading(false);
+    }
+    loadMembers();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading team members...</div>
+  }
+  
+  return <AdminTeamPage initialMembers={initialMembers} />;
+}
+
+
+function AdminTeamPage({ initialMembers }: { initialMembers: TeamMember[] }) {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialMembers);
   const { toast } = useToast();
 
   useEffect(() => {
-    async function fetchTeamMembers() {
-        const members = await readTeamMembers();
-        setTeamMembers(members);
-    }
-    fetchTeamMembers();
-  }, []);
+    // This syncs the state if the initialMembers prop changes (e.g., after revalidation)
+    setTeamMembers(initialMembers);
+  }, [initialMembers]);
+
 
   const handleDelete = async (memberId: string, memberName: string) => {
     const result = await deleteTeamMember(memberId);
     
     if (result.success) {
-        // Optimistically update UI or re-fetch
+        // Optimistically update UI, but the revalidation from the server action is the source of truth
         const updatedMembers = teamMembers.filter(m => m.id !== memberId);
         setTeamMembers(updatedMembers);
         
@@ -47,6 +68,9 @@ export default function AdminTeamPage() {
           title: "Team Member Deleted",
           description: `"${memberName}" has been successfully deleted.`,
         });
+
+        // Manually trigger a refresh to be sure we get the revalidated data
+        window.location.reload(); 
     } else {
         toast({
           title: "Error",

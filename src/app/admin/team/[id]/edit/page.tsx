@@ -5,57 +5,85 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { TeamMember } from '@/lib/mock-data';
-import { readTeamMembers } from '@/lib/team-store';
+import { readTeamMembers } from '@/lib/team-store'; // We'll still need this for initial client-side fetch
 import { updateTeamMember } from '@/app/actions/teamActions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, UserCog } from 'lucide-react';
+import { ArrowLeft, Save, UserCog, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from '@/components/admin/image-uploader';
 
-export default function EditTeamMemberPage() {
-  const router = useRouter();
+// This is a new wrapper component to fetch data on the server first
+export default function EditTeamMemberPageWrapper() {
   const params = useParams();
   const { id } = params;
-  const { toast } = useToast();
-
   const [member, setMember] = useState<TeamMember | null>(null);
-  const [name, setName] = useState('');
-  const [role, setRole] = useState('');
-  const [bio, setBio] = useState('');
-  const [image, setImage] = useState('');
-  const [dataAiHint, setDataAiHint] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isNotFound, setIsNotFound] = useState(false);
 
   useEffect(() => {
-    if (id) {
+    if (id && typeof id === 'string') {
       const fetchMember = async () => {
+        setIsLoading(true);
         const members = await readTeamMembers();
         const foundMember = members.find(m => m.id === id);
         if (foundMember) {
           setMember(foundMember);
-          setName(foundMember.name);
-          setRole(foundMember.role);
-          setBio(foundMember.bio);
-          setImage(foundMember.image);
-          setDataAiHint(foundMember.dataAiHint || '');
           setIsNotFound(false);
         } else {
           setIsNotFound(true);
         }
+        setIsLoading(false);
       };
       fetchMember();
     }
   }, [id]);
 
+  if (isLoading) {
+    return <div className="text-center p-10"><Loader2 className="mr-2 h-6 w-6 animate-spin mx-auto" /> Loading team member data...</div>;
+  }
+
+  if (isNotFound) {
+     return (
+        <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+                <CardTitle>Team Member Not Found</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p>The team member with ID "{id}" could not be found.</p>
+            </CardContent>
+            <CardFooter>
+                 <Button variant="outline" asChild>
+                    <Link href="/admin/team"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Team List</Link>
+                </Button>
+            </CardFooter>
+        </Card>
+     );
+  }
+
+  return member ? <EditTeamMemberPage member={member} /> : null;
+}
+
+
+// The original component now receives the member data as a prop
+function EditTeamMemberPage({ member }: { member: TeamMember }) {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const [name, setName] = useState(member.name);
+  const [role, setRole] = useState(member.role);
+  const [bio, setBio] = useState(member.bio);
+  const [image, setImage] = useState(member.image);
+  const [dataAiHint, setDataAiHint] = useState(member.dataAiHint || '');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!member) return;
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     const updatedMemberData: TeamMember = {
       ...member,
@@ -82,30 +110,8 @@ export default function EditTeamMemberPage() {
       });
     }
     
-    setIsLoading(false);
+    setIsSubmitting(false);
   };
-
-  if (isNotFound) {
-     return (
-        <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-                <CardTitle>Team Member Not Found</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p>The team member with ID "{id}" could not be found or an error occurred.</p>
-            </CardContent>
-            <CardFooter>
-                 <Button variant="outline" asChild>
-                    <Link href="/admin/team"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Team List</Link>
-                </Button>
-            </CardFooter>
-        </Card>
-     );
-  }
-  
-  if (!member && !isNotFound) { // Still loading
-    return <p>Loading team member data...</p>;
-  }
 
 
   return (
@@ -116,7 +122,7 @@ export default function EditTeamMemberPage() {
       <Card className="max-w-2xl mx-auto shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><UserCog /> Edit Team Member</CardTitle>
-          <CardDescription>Modify the details for "{member?.name}".</CardDescription>
+          <CardDescription>Modify the details for "{member.name}".</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -164,8 +170,8 @@ export default function EditTeamMemberPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {isLoading ? 'Saving...' : <><Save className="mr-2 h-4 w-4" /> Save Changes</>}
+            <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Changes</>}
             </Button>
           </CardFooter>
         </form>
