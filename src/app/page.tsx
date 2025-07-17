@@ -3,8 +3,10 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plane, Search, HandCoins } from 'lucide-react';
+import { Plane, Search, HandCoins, Users } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { readTeamMembers } from '@/lib/team-store';
 
 function HeroSection() {
   return (
@@ -76,9 +78,53 @@ function FeaturesSection() {
   );
 }
 
+async function TeamSection() {
+  const teamMembers = (await readTeamMembers()).slice(0, 4); // Get first 4 members
+
+  return (
+    <section className="py-16 md:py-24 bg-background">
+      <div className="container">
+        <div className="text-center mb-12">
+          <Users className="w-12 h-12 text-primary mx-auto mb-4" />
+          <h2 className="text-3xl md:text-4xl font-headline font-bold text-primary">Meet Our Team</h2>
+          <p className="mt-3 text-lg text-foreground/80 max-w-2xl mx-auto">
+            The dedicated professionals behind your next great adventure.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {teamMembers.map((member) => (
+            <Card key={member.id} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 animate-slideInUp">
+              <CardHeader className="items-center pb-4">
+                <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-primary/20">
+                  <Image
+                    src={member.image}
+                    alt={`Photo of ${member.name}`}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    data-ai-hint={member.dataAiHint}
+                  />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardTitle className="text-xl">{member.name}</CardTitle>
+                <p className="text-primary font-semibold mt-1">{member.role}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <div className="text-center mt-12">
+            <Button asChild size="lg">
+                <Link href="/about">More About Us</Link>
+            </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function CtaSection() {
     return (
-        <section id="cta" className="py-16 md:py-24 bg-background">
+        <section id="cta" className="py-16 md:py-24 bg-secondary">
             <div className="container text-center">
                  <h2 className="text-3xl md:text-4xl font-headline font-bold text-primary mb-4">Ready for an Unforgettable Journey?</h2>
                  <p className="text-lg text-foreground/80 max-w-xl mx-auto mb-8">
@@ -99,6 +145,7 @@ export default function Home() {
       <main className="flex-grow">
         <HeroSection />
         <FeaturesSection />
+        <TeamSection />
         <CtaSection />
       </main>
       <Footer />
