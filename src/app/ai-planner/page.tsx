@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -16,7 +16,7 @@ function AIPlannerContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useState(() => {
+  useEffect(() => {
     async function fetchRecommendations() {
       setIsLoading(true);
       setError(null);
@@ -36,7 +36,7 @@ function AIPlannerContent() {
     if(query) {
       fetchRecommendations();
     }
-  });
+  }, [query]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
