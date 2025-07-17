@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, Settings, Package, ClipboardList, Home, GalleryHorizontalEnd } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, Package, ClipboardList, Home, Plane } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
