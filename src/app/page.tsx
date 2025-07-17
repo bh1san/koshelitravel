@@ -11,6 +11,7 @@ import { readPackages } from '@/lib/package-store';
 import { readSettings } from '@/lib/settings-store';
 import { mockVisaOptions, type TravelPackage } from '@/lib/mock-data';
 import { AIPlannerSearch } from '@/components/common/ai-planner-search';
+import { PromoPopup } from '@/components/common/promo-popup';
 
 async function HeroSection() {
   const { banner } = await readSettings();
@@ -233,7 +234,9 @@ async function TeamSection() {
 }
 
 
-export default function Home() {
+export default async function Home() {
+  const { promo } = await readSettings();
+  
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
@@ -245,6 +248,7 @@ export default function Home() {
         <TeamSection />
       </main>
       <Footer />
+       <PromoPopup enabled={promo.enabled} imageUrl={promo.imageUrl} />
     </div>
   );
 }
