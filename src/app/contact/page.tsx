@@ -83,25 +83,25 @@ export default function ContactPage() {
                 </div>
                  <div className="flex items-center gap-4">
                   <Phone className="h-6 w-6 text-accent" />
-                  <a href="tel:+15551234567" className="text-lg hover:text-primary transition-colors">+1 (555) 123-4567</a>
+                  <a href="tel:+97141234567" className="text-lg hover:text-primary transition-colors">+971 (4) 123-4567</a>
                 </div>
                  <div className="flex items-start gap-4">
                   <MapPin className="h-6 w-6 text-accent mt-1" />
                   <p className="text-lg">
-                    123 Adventure Lane<br />
-                    Travel City, World 12345
+                    123 Business Bay<br />
+                    Dubai, United Arab Emirates
                   </p>
                 </div>
               </div>
                <div className="mt-8 rounded-lg overflow-hidden shadow-xl">
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.086439311495!2d144.9537353153167!3d-37.81720977975171!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0x5045675218ce7e0!2sMelbourne%20VIC%2C%20Australia!5e0!3m2!1sen!2sus!4v1622209180000" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115539.03453372051!2d55.19694034875426!3d25.19574880151463!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43496ad9c645%3A0xbde66e5084295162!2sDubai%20-%20United%20Arab%20Emirates!5e0!3m2!1sen!2sus!4v1622209180000"
                     width="100%" 
                     height="350" 
                     style={{ border: 0 }} 
                     allowFullScreen={false} 
                     loading="lazy"
-                    title="Google Maps Location"
+                    title="Google Maps Location - Dubai"
                     className="w-full"
                 ></iframe>
               </div>
