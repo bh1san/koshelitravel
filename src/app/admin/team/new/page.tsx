@@ -11,7 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Save, UserPlus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { mockTeamMembers, type TeamMember } from '@/lib/mock-data'; 
+import type { TeamMember } from '@/lib/mock-data'; 
+import { readTeamMembers, writeTeamMembers } from '@/lib/team-store';
 import { ImageUploader } from '@/components/admin/image-uploader';
 
 export default function NewTeamMemberPage() {
@@ -34,18 +35,18 @@ export default function NewTeamMemberPage() {
       name,
       role,
       bio,
-      image: image || 'https://placehold.co/300x300.png', // Default placeholder if empty
+      image: image || 'https://placehold.co/300x300.png',
       dataAiHint: dataAiHint || 'person portrait',
     };
     
-    // Simulate API call / data update
-    await new Promise(resolve => setTimeout(resolve, 500));
-    mockTeamMembers.push(newMember);
+    const currentMembers = await readTeamMembers();
+    currentMembers.push(newMember);
+    await writeTeamMembers(currentMembers);
 
     setIsLoading(false);
     toast({
       title: "Team Member Added",
-      description: `"${name}" has been successfully added to the team (simulated).`,
+      description: `"${name}" has been successfully added to the team.`,
     });
     router.push('/admin/team');
   };

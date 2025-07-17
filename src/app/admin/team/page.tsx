@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { mockTeamMembers, type TeamMember } from '@/lib/mock-data';
+import type { TeamMember } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -20,25 +20,30 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { readTeamMembers, writeTeamMembers } from '@/lib/team-store';
 
 export default function AdminTeamPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    setTeamMembers([...mockTeamMembers]); // Create a local copy for safe manipulation
+    async function fetchTeamMembers() {
+        const members = await readTeamMembers();
+        setTeamMembers(members);
+    }
+    fetchTeamMembers();
   }, []);
 
-  const handleDelete = (memberId: string, memberName: string) => {
-    // Simulate deletion
-    const memberIndex = mockTeamMembers.findIndex(m => m.id === memberId);
-    if (memberIndex !== -1) {
-        mockTeamMembers.splice(memberIndex, 1);
-        setTeamMembers([...mockTeamMembers]); // Update local state to re-render
-    }
+  const handleDelete = async (memberId: string, memberName: string) => {
+    const currentMembers = await readTeamMembers();
+    const updatedMembers = currentMembers.filter(m => m.id !== memberId);
+    
+    await writeTeamMembers(updatedMembers);
+    setTeamMembers(updatedMembers);
+    
     toast({
       title: "Team Member Deleted",
-      description: `"${memberName}" has been successfully deleted (simulated).`,
+      description: `"${memberName}" has been successfully deleted.`,
       variant: "destructive",
     });
   };

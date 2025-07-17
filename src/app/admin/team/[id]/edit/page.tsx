@@ -4,7 +4,8 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { mockTeamMembers, type TeamMember } from '@/lib/mock-data';
+import type { TeamMember } from '@/lib/mock-data';
+import { readTeamMembers, writeTeamMembers } from '@/lib/team-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,18 +32,22 @@ export default function EditTeamMemberPage() {
 
   useEffect(() => {
     if (id) {
-      const foundMember = mockTeamMembers.find(m => m.id === id);
-      if (foundMember) {
-        setMember(foundMember);
-        setName(foundMember.name);
-        setRole(foundMember.role);
-        setBio(foundMember.bio);
-        setImage(foundMember.image);
-        setDataAiHint(foundMember.dataAiHint || '');
-        setIsNotFound(false);
-      } else {
-        setIsNotFound(true);
-      }
+      const fetchMember = async () => {
+        const members = await readTeamMembers();
+        const foundMember = members.find(m => m.id === id);
+        if (foundMember) {
+          setMember(foundMember);
+          setName(foundMember.name);
+          setRole(foundMember.role);
+          setBio(foundMember.bio);
+          setImage(foundMember.image);
+          setDataAiHint(foundMember.dataAiHint || '');
+          setIsNotFound(false);
+        } else {
+          setIsNotFound(true);
+        }
+      };
+      fetchMember();
     }
   }, [id]);
 
@@ -50,10 +55,12 @@ export default function EditTeamMemberPage() {
     event.preventDefault();
     setIsLoading(true);
 
-    const memberIndex = mockTeamMembers.findIndex(m => m.id === id);
+    const members = await readTeamMembers();
+    const memberIndex = members.findIndex(m => m.id === id);
+
     if (memberIndex !== -1) {
-      mockTeamMembers[memberIndex] = {
-        ...mockTeamMembers[memberIndex],
+      members[memberIndex] = {
+        ...members[memberIndex],
         name,
         role,
         bio,
@@ -61,12 +68,11 @@ export default function EditTeamMemberPage() {
         dataAiHint: dataAiHint || 'person portrait',
       };
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await writeTeamMembers(members);
 
       toast({
         title: "Team Member Updated",
-        description: `"${name}"'s details have been successfully updated (simulated).`,
+        description: `"${name}"'s details have been successfully updated.`,
       });
       router.push('/admin/team');
     } else {
@@ -75,7 +81,7 @@ export default function EditTeamMemberPage() {
         description: "Team member not found for update.",
         variant: "destructive",
       });
-      setIsNotFound(true); // Should already be set, but reaffirm
+      setIsNotFound(true);
     }
     setIsLoading(false);
   };
