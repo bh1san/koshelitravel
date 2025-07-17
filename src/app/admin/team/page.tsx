@@ -4,6 +4,8 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import type { TeamMember } from '@/lib/mock-data';
+import { readTeamMembers } from '@/lib/team-store';
+import { deleteTeamMember } from '@/app/actions/teamActions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -20,7 +22,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { readTeamMembers, writeTeamMembers } from '@/lib/team-store';
 
 export default function AdminTeamPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -35,17 +36,24 @@ export default function AdminTeamPage() {
   }, []);
 
   const handleDelete = async (memberId: string, memberName: string) => {
-    const currentMembers = await readTeamMembers();
-    const updatedMembers = currentMembers.filter(m => m.id !== memberId);
+    const result = await deleteTeamMember(memberId);
     
-    await writeTeamMembers(updatedMembers);
-    setTeamMembers(updatedMembers);
-    
-    toast({
-      title: "Team Member Deleted",
-      description: `"${memberName}" has been successfully deleted.`,
-      variant: "destructive",
-    });
+    if (result.success) {
+        // Optimistically update UI or re-fetch
+        const updatedMembers = teamMembers.filter(m => m.id !== memberId);
+        setTeamMembers(updatedMembers);
+        
+        toast({
+          title: "Team Member Deleted",
+          description: `"${memberName}" has been successfully deleted.`,
+        });
+    } else {
+        toast({
+          title: "Error",
+          description: result.message,
+          variant: "destructive",
+        });
+    }
   };
 
   return (
@@ -102,7 +110,7 @@ export default function AdminTeamPage() {
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={async () => await handleDelete(member.id, member.name)}>
+                            <AlertDialogAction onClick={() => handleDelete(member.id, member.name)}>
                               Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>

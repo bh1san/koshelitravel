@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, Save, UserPlus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { TeamMember } from '@/lib/mock-data'; 
-import { readTeamMembers, writeTeamMembers } from '@/lib/team-store';
+import { addTeamMember } from '@/app/actions/teamActions';
 import { ImageUploader } from '@/components/admin/image-uploader';
 
 export default function NewTeamMemberPage() {
@@ -39,16 +39,23 @@ export default function NewTeamMemberPage() {
       dataAiHint: dataAiHint || 'person portrait',
     };
     
-    const currentMembers = await readTeamMembers();
-    currentMembers.push(newMember);
-    await writeTeamMembers(currentMembers);
+    const result = await addTeamMember(newMember);
+
+    if (result.success) {
+      toast({
+        title: "Team Member Added",
+        description: `"${name}" has been successfully added to the team.`,
+      });
+      router.push('/admin/team');
+    } else {
+      toast({
+        title: "Error",
+        description: result.message,
+        variant: "destructive",
+      });
+    }
 
     setIsLoading(false);
-    toast({
-      title: "Team Member Added",
-      description: `"${name}" has been successfully added to the team.`,
-    });
-    router.push('/admin/team');
   };
 
   return (

@@ -5,7 +5,8 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { TeamMember } from '@/lib/mock-data';
-import { readTeamMembers, writeTeamMembers } from '@/lib/team-store';
+import { readTeamMembers } from '@/lib/team-store';
+import { updateTeamMember } from '@/app/actions/teamActions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -53,23 +54,21 @@ export default function EditTeamMemberPage() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    if (!member) return;
     setIsLoading(true);
 
-    const members = await readTeamMembers();
-    const memberIndex = members.findIndex(m => m.id === id);
+    const updatedMemberData: TeamMember = {
+      ...member,
+      name,
+      role,
+      bio,
+      image: image || 'https://placehold.co/300x300.png',
+      dataAiHint: dataAiHint || 'person portrait',
+    };
 
-    if (memberIndex !== -1) {
-      members[memberIndex] = {
-        ...members[memberIndex],
-        name,
-        role,
-        bio,
-        image: image || 'https://placehold.co/300x300.png',
-        dataAiHint: dataAiHint || 'person portrait',
-      };
-      
-      await writeTeamMembers(members);
+    const result = await updateTeamMember(updatedMemberData);
 
+    if (result.success) {
       toast({
         title: "Team Member Updated",
         description: `"${name}"'s details have been successfully updated.`,
@@ -78,11 +77,11 @@ export default function EditTeamMemberPage() {
     } else {
       toast({
         title: "Error",
-        description: "Team member not found for update.",
+        description: result.message,
         variant: "destructive",
       });
-      setIsNotFound(true);
     }
+    
     setIsLoading(false);
   };
 

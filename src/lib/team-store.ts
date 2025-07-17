@@ -4,7 +4,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { TeamMember } from '@/lib/mock-data';
-import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
+import { unstable_noStore as noStore } from 'next/cache';
 
 const storePath = path.join(process.cwd(), 'team-store.json');
 
@@ -63,9 +63,6 @@ export async function readTeamMembers(): Promise<TeamMember[]> {
 export async function writeTeamMembers(data: TeamMember[]): Promise<void> {
   try {
     await fs.writeFile(storePath, JSON.stringify(data, null, 2), 'utf-8');
-    // Revalidate paths to ensure the changes are reflected immediately
-    revalidatePath('/about');
-    revalidatePath('/admin/team');
   } catch (error) {
     console.error('Failed to write team store:', error);
     throw new Error('Could not save team data.');
