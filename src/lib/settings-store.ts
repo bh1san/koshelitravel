@@ -32,7 +32,9 @@ export async function readSettings(): Promise<SiteSettings> {
   noStore(); // Opts this function out of all caching.
   try {
     const fileContent = await fs.readFile(settingsFilePath, 'utf-8');
-    return JSON.parse(fileContent);
+    // Merge with defaults to ensure all keys are present
+    const savedSettings = JSON.parse(fileContent);
+    return { ...defaultSiteSettings, ...savedSettings };
   } catch (error: any) {
     // If the file doesn't exist, that's okay. We'll use the defaults.
     if (error.code === 'ENOENT') {

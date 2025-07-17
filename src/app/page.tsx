@@ -8,18 +8,25 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { readTeamMembers } from '@/lib/team-store';
 import { readPackages } from '@/lib/package-store';
+import { readSettings } from '@/lib/settings-store';
 import { mockVisaOptions, type TravelPackage } from '@/lib/mock-data';
 
-function HeroSection() {
+async function HeroSection() {
+  const { banner } = await readSettings();
+
   return (
-    <section className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[70vh] flex items-center animate-fadeIn" style={{ backgroundImage: "url('https://www.imghippo.com/i/hV7929iHQ.jpg')" }} data-ai-hint="dubai skyline desert">
+    <section 
+      className="relative bg-cover bg-center text-primary-foreground py-20 md:py-32 min-h-[70vh] flex items-center animate-fadeIn" 
+      style={{ backgroundImage: `url('${banner.imageUrl || 'https://placehold.co/1920x1080.png'}')` }}
+      data-ai-hint="dubai skyline desert"
+    >
       <div className="absolute inset-0 bg-black/70 z-0"></div>
       <div className="container relative z-10 text-center">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-6 text-white shadow-text">
-          Your Next Adventure Awaits
+          {banner.title}
         </h1>
         <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/90 shadow-text">
-          Discover breathtaking destinations and create unforgettable memories with KosheliTravel. Personalized plans, expert advice, and exclusive deals.
+          {banner.subtitle}
         </p>
         <div className="space-x-4">
           <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-3 text-lg">

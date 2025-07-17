@@ -1,3 +1,4 @@
+
 // src/app/api/settings/banner/route.ts
 import { NextResponse } from 'next/server';
 import { readSettings, writeSettings } from '@/lib/settings-store';
