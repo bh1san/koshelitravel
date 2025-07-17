@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import type { TeamMember } from '@/lib/mock-data';
 import { readTeamMembers } from '@/lib/team-store';
 import { deleteTeamMember } from '@/app/actions/teamActions';
@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import Image from 'next/image';
 
 // This component now fetches its initial data on the server.
 // We wrap the client-side logic in a separate component.
@@ -70,7 +71,8 @@ function AdminTeamPage({ initialMembers }: { initialMembers: TeamMember[] }) {
         });
 
         // Manually trigger a refresh to be sure we get the revalidated data
-        window.location.reload(); 
+        // A better approach would be to rely solely on revalidatePath, but this is a failsafe
+        // router.refresh(); 
     } else {
         toast({
           title: "Error",
@@ -102,6 +104,7 @@ function AdminTeamPage({ initialMembers }: { initialMembers: TeamMember[] }) {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Photo</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -110,6 +113,11 @@ function AdminTeamPage({ initialMembers }: { initialMembers: TeamMember[] }) {
               <TableBody>
                 {teamMembers.map((member) => (
                   <TableRow key={member.id}>
+                     <TableCell>
+                      <div className="relative h-12 w-12 rounded-full overflow-hidden">
+                        <Image src={member.image || 'https://placehold.co/100x100.png'} alt={member.name} fill style={{ objectFit: 'cover' }} />
+                      </div>
+                    </TableCell>
                     <TableCell className="font-medium">{member.name}</TableCell>
                     <TableCell>{member.role}</TableCell>
                     <TableCell className="text-right space-x-2">
