@@ -38,7 +38,7 @@ const defaultTeamMembers: TeamMember[] = [
     name: 'David Copperfield',
     role: 'Marketing Manager',
     bio: 'David brings the magic of KosheliTravel to the world, sharing inspiring stories and connecting with fellow adventurers.',
-    image: 'https://placehold.co/300x400.png',
+    image: 'https://placehold.co/300x300.png',
     dataAiHint: 'man creative professional'
   }
 ];
