@@ -5,7 +5,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-const WHATSAPP_PHONE_NUMBER = '+15551234567'; // Replace with your actual WhatsApp number
+const WHATSAPP_PHONE_NUMBER = '+97143538898';
 
 export function WhatsappChat() {
   const whatsappUrl = `https://wa.me/${WHATSAPP_PHONE_NUMBER.replace(/\D/g, '')}`;

@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, MapPin, Send, Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Loader2, Clock } from 'lucide-react';
 import { sendContactEmailAction } from '@/app/actions/sendEmailAction';
 
 export default function ContactPage() {
@@ -83,19 +83,24 @@ export default function ContactPage() {
                 </div>
                  <div className="flex items-center gap-4">
                   <Phone className="h-6 w-6 text-accent" />
-                  <a href="tel:+97141234567" className="text-lg hover:text-primary transition-colors">+971 (4) 123-4567</a>
+                  <a href="tel:+97143538898" className="text-lg hover:text-primary transition-colors">04 353 8898</a>
                 </div>
                  <div className="flex items-start gap-4">
                   <MapPin className="h-6 w-6 text-accent mt-1" />
                   <p className="text-lg">
-                    123 Business Bay<br />
-                    Dubai, United Arab Emirates
+                    2 Al Raffa St - Al Fahidi - Dubai
+                  </p>
+                </div>
+                <div className="flex items-start gap-4">
+                  <Clock className="h-6 w-6 text-accent mt-1" />
+                  <p className="text-lg">
+                    Everyday 9 AM to 10.30PM
                   </p>
                 </div>
               </div>
                <div className="mt-8 rounded-lg overflow-hidden shadow-xl">
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115539.03453372051!2d55.19694034875426!3d25.19574880151463!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43496ad9c645%3A0xbde66e5084295162!2sDubai%20-%20United%20Arab%20Emirates!5e0!3m2!1sen!2sus!4v1622209180000"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3608.213398491873!2d55.2857056753835!3d25.26330547766782!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f434b9b089e8f%3A0x7c7843e33f07973d!2sAl%20Raffa%20St!5e0!3m2!1sen!2sae!4v1719835773255"
                     width="100%" 
                     height="350" 
                     style={{ border: 0 }} 
