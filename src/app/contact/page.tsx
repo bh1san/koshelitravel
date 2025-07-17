@@ -79,7 +79,7 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <Mail className="h-6 w-6 text-accent" />
-                  <a href="mailto:support@koshelitravel.com" className="text-lg hover:text-primary transition-colors">support@koshelitravel.com</a>
+                  <a href="mailto:koshelitravel@gmail.com" className="text-lg hover:text-primary transition-colors">koshelitravel@gmail.com</a>
                 </div>
                  <div className="flex items-center gap-4">
                   <Phone className="h-6 w-6 text-accent" />

@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
 
             <section>
               <h2 className="text-2xl md:text-3xl font-semibold mb-4 text-primary">10. Contacting Us</h2>
-              <p>If you have questions or comments about this notice, you may contact us by email at support@koshelitravel.com.</p>
+              <p>If you have questions or comments about this notice, you may contact us by email at koshelitravel@gmail.com.</p>
             </section>
           </div>
         </div>

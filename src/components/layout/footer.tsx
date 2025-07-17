@@ -56,7 +56,7 @@ export async function Footer() {
           <p className="text-sm mb-4">Subscribe to our newsletter for the latest travel deals and destination inspiration.</p>
           <NewsletterForm />
           <div className="mt-6 space-y-2 text-sm">
-            <p className="flex items-center gap-2"><Mail size={16} className="text-accent"/> support@koshelitravel.com</p>
+            <p className="flex items-center gap-2"><Mail size={16} className="text-accent"/> koshelitravel@gmail.com</p>
             <p className="flex items-center gap-2"><Phone size={16} className="text-accent"/> 04 353 8898</p>
           </div>
         </div>
