@@ -23,7 +23,7 @@ if (isConfigured) {
 
 export const ai = genkit({
   plugins,
-  model: 'googleai/gemini-2.0-flash',
+  model: 'googleai/gemini-1.5-flash-latest',
   // A custom flow runner to handle cases where no AI plugin is configured.
   flowRunner: async (flow, input, streamingCallback) => {
     if (!isConfigured) {
