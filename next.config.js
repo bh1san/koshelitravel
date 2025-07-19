@@ -19,7 +19,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'www.imghippo.com',
         port: '',
-        pathname: '/i/**',
+        pathname: '/**',
       },
     ],
   },
