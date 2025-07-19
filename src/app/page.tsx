@@ -38,7 +38,7 @@ async function HeroSection() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-             <AIPlannerSearch />
+             {/* <AIPlannerSearch /> */}
           </CardContent>
         </Card>
 
@@ -252,5 +252,3 @@ export default async function Home() {
     </div>
   );
 }
-
-    

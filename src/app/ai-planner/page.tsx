@@ -21,11 +21,12 @@ function AIPlannerContent() {
       setIsLoading(true);
       setError(null);
       try {
-        const result = await getTravelRecommendations({ preferences: query });
-        if (!result || result.destinations.length === 0) {
-            throw new Error("The AI couldn't find any recommendations for your query. Please try being more specific!");
-        }
-        setRecommendations(result);
+        // const result = await getTravelRecommendations({ preferences: query });
+        // if (!result || result.destinations.length === 0) {
+        //     throw new Error("The AI couldn't find any recommendations for your query. Please try being more specific!");
+        // }
+        // setRecommendations(result);
+        throw new Error("AI Planner is temporarily disabled for maintenance.");
       } catch (err: any) {
         console.error("AI Planner Error:", err);
         setError(err.message || "An unexpected error occurred.");
