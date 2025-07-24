@@ -113,9 +113,9 @@ async function AllPackagesSection() {
                 <Image
                   src={pkg.image}
                   alt={pkg.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  className="transition-transform duration-500 group-hover:scale-110"
+                  width={600}
+                  height={400}
+                  className="transition-transform duration-500 group-hover:scale-110 h-full w-full object-cover"
                   data-ai-hint={pkg.dataAiHint || ''}
                 />
                  <div className="absolute top-2 right-2 bg-primary/90 text-primary-foreground text-xs font-bold py-1 px-2 rounded-full capitalize">
