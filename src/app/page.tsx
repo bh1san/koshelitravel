@@ -14,7 +14,7 @@ import { AIPlannerSearch } from '@/components/common/ai-planner-search';
 import { PromoPopup } from '@/components/common/promo-popup';
 
 async function HeroSection() {
-  const { banner } = await readSettings();
+  const { banner } = (await readSettings()) || { banner: {} };
 
   return (
     <section 
@@ -25,10 +25,10 @@ async function HeroSection() {
       <div className="absolute inset-0 bg-black/70 z-0"></div>
       <div className="container relative z-10 text-center">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-headline font-bold mb-4 text-white shadow-text">
-          {banner.title}
+          {banner.title || 'Your Next Adventure Awaits'}
         </h1>
         <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto text-white/90 shadow-text">
-          {banner.subtitle}
+          {banner.subtitle || 'Discover breathtaking destinations and create unforgettable memories.'}
         </p>
         
         <Card className="max-w-2xl mx-auto p-4 sm:p-6 bg-background/20 backdrop-blur-sm border-white/20">
@@ -252,5 +252,3 @@ export default async function Home() {
     </div>
   );
 }
-
-    
