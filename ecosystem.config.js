@@ -3,8 +3,8 @@ module.exports = {
   apps: [
     {
       name: 'kosheli-travel',
-      script: 'next',
-      args: 'start',
+      script: 'npm',
+      args: 'run start',
       // Options reference: https://pm2.io/doc/en/runtime/reference/ecosystem-file/
       instances: 1,
       autorestart: true,
