@@ -1,4 +1,3 @@
-
 {
   "name": "nextn",
   "version": "0.1.0",
@@ -8,7 +7,9 @@
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "next build",
-    "start": "npm run build && pm2 restart kosheli-travel || pm2 start next --name kosheli-travel -- start --port ${PORT-3000}",
+    "start": "npm run build && npm run delete && pm2 start next --name kosheli-travel -- start --port ${PORT-3000}",
+    "stop": "pm2 stop kosheli-travel || true",
+    "delete": "pm2 delete kosheli-travel || true",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },
