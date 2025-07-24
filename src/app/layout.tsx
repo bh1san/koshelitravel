@@ -1,6 +1,6 @@
 
 import type {Metadata} from 'next';
-import './globals.css';
+import '@/app/globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { WhatsappChat } from '@/components/common/whatsapp-chat';
 import { Inter } from 'next/font/google';
