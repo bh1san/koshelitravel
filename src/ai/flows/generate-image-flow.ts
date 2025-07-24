@@ -20,7 +20,7 @@ export const GenerateImageOutputSchema = z.object({
   imageUrl: z
     .string()
     .describe(
-      "The generated image as a data URI. Expected format: 'data:image/png;base64,<encoded_data>'."
+      "The generated image as a data URI. Expected format: 'data:image/png;base64,<encoded_data>'"
     ),
 });
 export type GenerateImageOutput = z.infer<typeof GenerateImageOutputSchema>;
