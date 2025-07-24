@@ -1,6 +1,4 @@
 
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Plane, Search, HandCoins, Users, Star, Tag, Briefcase, GraduationCap, CalendarDays, Clock, DollarSign, Wand2 } from 'lucide-react';
@@ -239,7 +237,6 @@ export default async function Home() {
   
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
       <main className="flex-grow">
         <HeroSection />
         <FeaturesSection />
@@ -247,8 +244,7 @@ export default async function Home() {
         <ServicesSection />
         <TeamSection />
       </main>
-      <Footer />
-       <PromoPopup enabled={promo.enabled} imageUrl={promo.imageUrl} />
+      <PromoPopup enabled={promo.enabled} imageUrl={promo.imageUrl} />
     </div>
   );
 }

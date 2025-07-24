@@ -3,13 +3,12 @@ import Link from 'next/link';
 import { Plane, Mail, Phone, Facebook, Instagram, Twitter } from 'lucide-react';
 import { NewsletterForm } from '@/components/common/newsletter-form';
 import Image from 'next/image';
-import { readSettings } from '@/lib/settings-store';
 
+interface FooterProps {
+  logoUrl: string | null;
+}
 
-export async function Footer() {
-  const settings = await readSettings();
-  const logoUrl = settings.logoUrl;
-
+export function Footer({ logoUrl }: FooterProps) {
   const Logo = () => (
     <>
       {logoUrl ? (

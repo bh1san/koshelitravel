@@ -2,8 +2,6 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -52,7 +50,6 @@ export default function ContactPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
       <main className="flex-grow">
         {/* Hero Section */}
         <section className="bg-primary text-primary-foreground py-16 md:py-20">
@@ -148,7 +145,6 @@ export default function ContactPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

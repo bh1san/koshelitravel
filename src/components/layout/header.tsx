@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Menu, Plane, Wand2 } from 'lucide-react';
 import Image from 'next/image';
-import { readSettings } from '@/lib/settings-store';
 
 const navLinks = [
   { href: '/#features', label: 'Features' },
@@ -15,10 +14,11 @@ const navLinks = [
   { href: '/contact', label: 'Contact' },
 ];
 
-export async function Header() {
-  const settings = await readSettings();
-  const logoUrl = settings.logoUrl;
+interface HeaderProps {
+  logoUrl: string | null;
+}
 
+export function Header({ logoUrl }: HeaderProps) {
   const Logo = () => (
     <>
       {logoUrl ? (

@@ -2,10 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { ShieldCheck } from 'lucide-react';
-import Link from 'next/link';
 
 export default function PrivacyPolicyPage() {
   const [lastModifiedDate, setLastModifiedDate] = useState('');
@@ -16,7 +13,6 @@ export default function PrivacyPolicyPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      <Header />
       <main className="flex-grow py-12 md:py-16">
         <div className="container">
           <div className="text-center mb-10 md:mb-12 animate-fadeIn">
@@ -76,7 +72,6 @@ export default function PrivacyPolicyPage() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
