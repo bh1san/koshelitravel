@@ -112,13 +112,16 @@ export function ImageUploader({ onUploadComplete, currentImageUrl, folder = 'gen
                       className="max-w-full max-h-56 object-contain rounded" 
                       onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                          const errorMsg = document.createElement('p');
-                          errorMsg.textContent = 'Preview not available or URL is invalid.';
-                          errorMsg.className = 'text-destructive text-xs';
-                          if (target.parentNode) {
-                            target.parentNode.appendChild(errorMsg);
+                          target.onerror = null; // prevent infinite loop
+                          target.src = 'https://placehold.co/600x400.png';
+                          const parent = target.parentNode as HTMLElement;
+                          if (parent) {
+                            const errorMsg = document.createElement('p');
+                            errorMsg.textContent = 'Preview URL is invalid. Showing placeholder.';
+                            errorMsg.className = 'text-destructive text-xs mt-2 text-center';
+                            parent.appendChild(errorMsg);
                           }
+
                       }}
                   />
               </div>
