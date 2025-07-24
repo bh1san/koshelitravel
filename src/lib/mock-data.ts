@@ -119,7 +119,7 @@ export let mockBlogArticles: BlogArticle[] = [
     publishedDate: '2024-06-22', 
     status: 'published',
     tags: ['budget travel', 'asia', 'adventure'],
-    featuredImage: 'https://placehold.co/600x400.png',
+    featuredImage: 'https/placehold.co/600x400.png',
     featuredImageAiHint: 'asia temple mountains'
   },
   {
