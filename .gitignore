@@ -1,10 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Local settings and data stores
-settings-store.json
-package-store.json
-team-store.json
-
 # Dependencies
 /node_modules
 /.pnp
@@ -20,27 +15,32 @@ team-store.json
 # Production
 /build
 
-# Misc
+# misc
 .DS_Store
 *.pem
 
-# Local .env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Log files
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Editor directories and files
-.vscode
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# User-specific files
+settings-store.json
+package-store.json
+team-store.json
+*~
+#
