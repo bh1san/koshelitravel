@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, MapPin, Send, Loader2, Clock } from 'lucide-react';
 import { sendContactEmailAction } from '@/app/actions/sendEmailAction';
 
-export default function ContactPage() {
+function ContactPageContent() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -148,3 +148,5 @@ export default function ContactPage() {
     </div>
   );
 }
+
+export default ContactPageContent;

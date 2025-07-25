@@ -4,10 +4,11 @@
 import { useState, useEffect } from 'react';
 import { ShieldCheck } from 'lucide-react';
 
-export default function PrivacyPolicyPage() {
+function PrivacyPolicyContent() {
   const [lastModifiedDate, setLastModifiedDate] = useState('');
 
   useEffect(() => {
+    // This code now runs only on the client, preventing the build error.
     setLastModifiedDate(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
   }, []);
 
@@ -75,3 +76,5 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
+
+export default PrivacyPolicyContent;
